@@ -1,0 +1,20 @@
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background: var(--tint);
+  color: var(--ink);
+  box-shadow: var(--clay-sm);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.category-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot);
+}

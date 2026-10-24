@@ -1,0 +1,37 @@
+.item-row {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 8px;
+  color: var(--ink);
+}
+
+.item-time {
+  flex: none;
+  width: 54px;
+  height: 32px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pill-bg);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.item-title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.item-done .item-title {
+  text-decoration: line-through;
+  opacity: 0.8;
+}

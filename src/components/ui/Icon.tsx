@@ -35,6 +35,15 @@ const PATHS = {
   ),
   back: <path d="m15 18-6-6 6-6" />,
   close: <path d="M18 6 6 18M6 6l12 12" />,
+  chevronDown: <path d="m6 9 6 6 6-6" />,
+  arrowRight: <path d="M5 12h14M12 5l7 7-7 7" />,
+  check: <path d="M20 6 9 17l-5-5" />,
+  trash: (
+    <>
+      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </>
+  ),
 } satisfies Record<string, ReactNode>
 
 export type IconName = keyof typeof PATHS

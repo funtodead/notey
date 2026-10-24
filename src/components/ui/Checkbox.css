@@ -1,0 +1,25 @@
+.checkbox {
+  flex: none;
+  width: 54px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--well);
+  box-shadow: var(--well-shadow);
+  color: #221f33;
+}
+
+.checkbox-checked {
+  background: var(--dot);
+  box-shadow: var(--clay-sm);
+}

@@ -1,0 +1,34 @@
+.category-section {
+  flex: none;
+  padding: 10px 10px 8px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.category-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px;
+  padding: 0 8px;
+}
+
+.category-section-header h2 {
+  flex: 1;
+  font-size: 18px;
+}
+
+.category-section-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: inset -1px -2px 3px rgba(0, 0, 0, 0.18), inset 1px 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.category-section-count {
+  font-size: 13px;
+  font-weight: 800;
+}

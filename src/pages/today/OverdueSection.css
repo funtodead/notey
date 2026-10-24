@@ -1,0 +1,110 @@
+.overdue {
+  flex: none;
+  padding: 6px 8px;
+  border-radius: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.overdue-header {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.overdue-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 6px;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.overdue-mark {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.overdue-count {
+  height: 20px;
+  min-width: 20px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: var(--err-tint);
+  color: var(--err-ink);
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overdue-chevron {
+  display: flex;
+  color: var(--muted);
+}
+
+.overdue-chevron-open {
+  transform: rotate(180deg);
+}
+
+.overdue-move-all {
+  height: 40px;
+  padding: 0 8px;
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.overdue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 2px 0 8px;
+  border-top: 1px solid var(--line);
+}
+
+.overdue-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+
+.overdue-title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.overdue-due {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--err-ink);
+}
+
+.overdue-move {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--accent-text);
+  font-size: 13px;
+  font-weight: 800;
+}
