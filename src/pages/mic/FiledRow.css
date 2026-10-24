@@ -74,3 +74,11 @@
   flex-direction: column;
   gap: 6px;
 }
+
+.filed-row-removed {
+  opacity: 0.7;
+}
+
+.filed-row-removed .filed-row-title {
+  text-decoration: line-through;
+}

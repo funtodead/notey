@@ -1,6 +1,7 @@
 import { IconButton } from '../../components/ui/IconButton'
 import type { MicSession } from '../../hooks/useMicSession'
 import type { MicError } from '../../types/mic'
+import { resultLabel } from './FiledResult'
 import './MicHeader.css'
 
 const ERROR_STATUS: Record<MicError, string> = {
@@ -17,8 +18,7 @@ function status({ phase, error, messages }: MicSession): { label: string; tone: 
   if (phase === 'error' && error) return { label: ERROR_STATUS[error], tone: 'err' }
   const last = messages.at(-1)
   if (phase === 'filed' && last?.role === 'ai') {
-    const count = last.refs.filter((r) => r.kind !== 'list').length
-    return { label: `Filed ${count} ${count === 1 ? 'thing' : 'things'}`, tone: 'ok' }
+    return { label: resultLabel(last.refs.filter((r) => r.kind !== 'list').length, last.removed.length), tone: 'ok' }
   }
   return { label: 'Ready', tone: 'ok' }
 }

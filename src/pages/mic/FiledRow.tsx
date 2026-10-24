@@ -1,7 +1,7 @@
 import { Icon } from '../../components/ui/Icon'
 import { useStore } from '../../hooks/useStore'
 import { useTodayDate } from '../../hooks/useTodayDate'
-import { describeRef } from '../../lib/filing'
+import { describeRef, type FiledSummary } from '../../lib/filing'
 import type { EntityRef } from '../../types/models'
 import './FiledRow.css'
 
@@ -43,5 +43,23 @@ export function FiledRow({ entity, compact, onClick }: FiledRowProps) {
         </>
       )}
     </button>
+  )
+}
+
+/** Something the AI deleted: shown crossed out, with nothing to fix (Undo all brings it back). */
+export function RemovedRow({ summary, compact }: { summary: FiledSummary; compact?: boolean }) {
+  return (
+    <div className={`filed-row filed-row-removed tone-${summary.color} ${compact ? 'filed-row-compact' : ''}`}>
+      <span className="filed-row-icon" aria-hidden="true">
+        <Icon name="trash" size={compact ? 16 : 20} />
+      </span>
+      <span className="filed-row-text">
+        <span className="filed-row-title">
+          <span className="visually-hidden">Deleted: </span>
+          {summary.title}
+        </span>
+        {!compact && <span className="filed-row-where">{summary.where}</span>}
+      </span>
+    </div>
   )
 }

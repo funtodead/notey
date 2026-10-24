@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { todayISO } from '../lib/dates'
+import { existingContext, planDeletions } from '../lib/deleting'
 import { emptiedLists, refile, toBundle, type Draft } from '../lib/filing'
 import { fileText, GroqError, transcribe } from '../lib/groq'
 import type { MicError, MicMessage, MicPhase } from '../types/mic'
@@ -51,15 +52,31 @@ export function useMicSession() {
     try {
       const today = todayISO()
       const { categories, lists } = latest.current.state
-      const entries = await fileText(groqKey, text, {
+      const existing = existingContext(latest.current.state, today)
+      const { entries, deletions } = await fileText(groqKey, text, {
         today,
         categories: categories.map(({ id, name }) => ({ id, name })),
         lists: lists.map((l) => l.name),
+        existing: existing.lines,
       })
-      const { bundle, refs } = toBundle(entries, latest.current.state, today)
+      const current = latest.current.state
+      const removal = planDeletions(deletions, existing.refs, current, today)
+      const { bundle, refs } = toBundle(entries, current, today)
+      if (removal.remove.length) dispatch({ type: 'entities/remove', refs: removal.remove })
+      for (const { id, skipDates } of removal.skips) dispatch({ type: 'items/update', id, changes: { skipDates } })
       dispatch({ type: 'entities/add', bundle })
       setKept(messageId, false)
-      setMessages((ms) => [...ms, { id: crypto.randomUUID(), role: 'ai', refs, createdAt: new Date().toISOString() }])
+      setMessages((ms) => [
+        ...ms,
+        {
+          id: crypto.randomUUID(),
+          role: 'ai',
+          refs,
+          removed: removal.summaries,
+          restore: removal.restore,
+          createdAt: new Date().toISOString(),
+        },
+      ])
       setPhase('filed')
     } catch (e) {
       setKept(messageId, true)
@@ -151,13 +168,17 @@ export function useMicSession() {
     replaceRef(messageId, ref, null)
   }
 
-  /** Removes everything one message filed, along with the message and what was said. */
+  /** Takes back everything one message filed or deleted, along with the message and what was said. */
   const undoAll = (messageId: string) => {
     const index = messages.findIndex((m) => m.id === messageId)
     const message = messages[index]
     if (message?.role !== 'ai') return
     const lists = emptiedLists(message.refs, state).map((l) => ({ kind: 'list' as const, id: l.id }))
     dispatch({ type: 'entities/remove', refs: [...message.refs, ...lists] })
+    dispatch({ type: 'entities/add', bundle: message.restore.bundle })
+    for (const item of message.restore.items) {
+      dispatch({ type: 'items/update', id: item.id, changes: { ...item, skipDates: item.skipDates ?? [] } })
+    }
     setMessages((ms) => ms.filter((_, i) => i !== index && i !== index - 1))
     setPhase('idle')
   }

@@ -2,7 +2,7 @@ import { Icon } from '../../components/ui/Icon'
 import type { MicSession } from '../../hooks/useMicSession'
 import type { EntityRef } from '../../types/models'
 import { FiledResult } from './FiledResult'
-import { FiledRow } from './FiledRow'
+import { FiledRow, RemovedRow } from './FiledRow'
 
 interface MessageListProps {
   session: MicSession
@@ -34,6 +34,7 @@ export function MessageList({ session, onEdit, onDone }: MessageListProps) {
         <FiledResult
           key={message.id}
           refs={message.refs}
+          removed={message.removed}
           onEdit={(ref) => onEdit(message.id, ref)}
           onUndoAll={() => session.undoAll(message.id)}
           onDone={onDone}
@@ -45,6 +46,9 @@ export function MessageList({ session, onEdit, onDone }: MessageListProps) {
       <div key={message.id} className="mic-card mic-history">
         {message.refs.map((ref) => (
           <FiledRow key={ref.id} entity={ref} compact onClick={() => onEdit(message.id, ref)} />
+        ))}
+        {message.removed.map((summary, i) => (
+          <RemovedRow key={i} summary={summary} compact />
         ))}
       </div>
     )

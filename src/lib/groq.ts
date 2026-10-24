@@ -19,11 +19,19 @@ export interface FiledEntry {
   repeat_until: string | null
 }
 
+/** Something existing the user asked to delete; `date` deletes one day of a repeating item. */
+export interface Deletion {
+  ref: string
+  date: string | null
+}
+
 export interface FilingContext {
   /** YYYY-MM-DD */
   today: string
   categories: { id: string; name: string }[]
   lists: string[]
+  /** One line per existing thing the user might refer to, each starting with its ref. */
+  existing: string[]
 }
 
 export class GroqError extends Error {
@@ -57,7 +65,11 @@ export async function transcribe(apiKey: string, audio: Blob): Promise<string> {
   return result.text.trim()
 }
 
-export async function fileText(apiKey: string, text: string, context: FilingContext): Promise<FiledEntry[]> {
+export async function fileText(
+  apiKey: string,
+  text: string,
+  context: FilingContext,
+): Promise<{ entries: FiledEntry[]; deletions: Deletion[] }> {
   const nullable = (type: string) => ({ type: [type, 'null'] })
   const schema = {
     type: 'object',
@@ -97,8 +109,17 @@ export async function fileText(apiKey: string, text: string, context: FilingCont
           additionalProperties: false,
         },
       },
+      deletions: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: { ref: { type: 'string' }, date: nullable('string') },
+          required: ['ref', 'date'],
+          additionalProperties: false,
+        },
+      },
     },
-    required: ['entries'],
+    required: ['entries', 'deletions'],
     additionalProperties: false,
   }
 
@@ -116,10 +137,10 @@ export async function fileText(apiKey: string, text: string, context: FilingCont
     }),
     true,
   )
-  return JSON.parse(result.choices[0].message.content).entries
+  return JSON.parse(result.choices[0].message.content)
 }
 
-function filingPrompt({ today, categories, lists }: FilingContext) {
+function filingPrompt({ today, categories, lists, existing }: FilingContext) {
   const weekday = new Date(`${today}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' })
   return `You file quick messages for Notey, a personal organizer. Today is ${weekday} ${today}.
 
@@ -157,5 +178,14 @@ Rules:
 - Titles are short and capitalized, without the date or time words, in the user's language.
 - details: for a note, anything beyond the title (who recommended it, phone numbers, passwords), kept exactly as said; for a list item, the quantity if given ("2 L", "12"); otherwise null.
 - category is the id of the best fit: ${categories.map((c) => `${c.id} (${c.name})`).join(', ')}.
-- list_emoji: one emoji for a list that doesn't exist yet, otherwise null.`
+- list_emoji: one emoji for a list that doesn't exist yet, otherwise null.
+
+Deleting:
+- When the user asks to delete, remove, cancel, cross off or forget something that already exists, put it in "deletions" with its ref from the list below, and don't create an entry for it.
+- For one day of a repeating item ("skip gym next Monday", "no yoga today"), give that day's date; to delete the whole thing, date is null.
+- Deleting a list deletes everything on it. Only use refs from the list; if nothing matches, delete nothing.
+- "move the dentist to Friday" = delete the old one and create the new one.
+
+Existing things:
+${existing.length ? existing.join('\n') : 'none'}`
 }

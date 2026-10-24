@@ -1,5 +1,5 @@
 import { useIonAlert } from '@ionic/react'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '../../components/ui/Icon'
 import { useSettings } from '../../hooks/useSettings'
@@ -16,6 +16,11 @@ export function BackupRow() {
   const showToast = useToast()
   const [presentAlert] = useIonAlert()
   const fileInput = useRef<HTMLInputElement>(null)
+  const [persisted, setPersisted] = useState(false)
+
+  useEffect(() => {
+    void navigator.storage?.persisted().then(setPersisted)
+  }, [])
 
   const exportBackup = async () => {
     try {
@@ -87,6 +92,12 @@ export function BackupRow() {
         />
       </section>
       <p className="settings-footnote">Your API key isn’t included. Save backups to Files › iCloud Drive to keep them safe.</p>
+      <p className="settings-footnote backup-storage">
+        <Icon name={persisted ? 'check' : 'alert'} size={14} strokeWidth={2.6} />
+        {persisted
+          ? 'Storage protected: iOS won’t clear Notey’s data to free up space.'
+          : 'Storage not marked protected by iOS yet. Open Notey from its Home Screen icon, and keep backups.'}
+      </p>
     </div>
   )
 }

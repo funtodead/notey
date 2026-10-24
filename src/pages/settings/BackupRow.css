@@ -49,3 +49,14 @@
   font-size: 13px;
   font-weight: 700;
 }
+
+.backup-storage {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.backup-storage svg {
+  flex: none;
+  margin-top: 2px;
+}

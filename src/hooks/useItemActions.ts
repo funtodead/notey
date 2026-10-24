@@ -20,7 +20,12 @@ export function useItemActions() {
   /** Applies changes to a stored item, with an Undo that puts it back as it was. */
   const changeWithUndo = (item: Item, changes: Partial<Item>, message: string) => {
     dispatch({ type: 'items/update', id: item.id, changes })
-    showToast({ message, onUndo: () => dispatch({ type: 'items/update', id: item.id, changes: item }) })
+    // Merging the old item back wouldn't clear a skip list it never had, so reset that explicitly.
+    showToast({
+      message,
+      onUndo: () =>
+        dispatch({ type: 'items/update', id: item.id, changes: { ...item, skipDates: item.skipDates ?? [] } }),
+    })
   }
 
   /** Deletes the whole item (every occurrence, for a repeating one). */
