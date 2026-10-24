@@ -63,7 +63,7 @@
 
 .year-month-days .year-day-busy {
   background: var(--dot);
-  color: #221f33;
+  color: var(--on-dot);
   opacity: 1;
 }
 

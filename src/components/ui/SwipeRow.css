@@ -19,7 +19,6 @@
   gap: 1px;
   font-size: 12px;
   font-weight: 800;
-  box-shadow: inset -3px -4px 8px rgba(0, 0, 0, 0.18), inset 3px 4px 8px rgba(255, 255, 255, 0.25);
 }
 
 /* The row's own (opaque) content covers the Delete button until it slides left. */

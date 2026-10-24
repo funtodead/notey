@@ -17,11 +17,13 @@ import './theme/clay.css'
 import './theme/global.css'
 
 import App from './App'
-import { requestPersistentStorage } from './lib/storage'
+import { loadSettings, requestPersistentStorage } from './lib/storage'
+import { applyAppearance } from './lib/theme'
 
 // Always use iOS behavior (transitions, gestures), even when previewing on a desktop browser.
 setupIonicReact({ mode: 'ios' })
 requestPersistentStorage()
+applyAppearance(loadSettings().appearance)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

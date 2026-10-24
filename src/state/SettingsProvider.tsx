@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, type ReactNode } from 'react'
 
 import { loadSettings, saveSettings } from '../lib/storage'
+import { applyAppearance } from '../lib/theme'
 import type { Settings } from '../types/models'
 
 export const SettingsContext = createContext<{
@@ -12,6 +13,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState(loadSettings)
 
   useEffect(() => saveSettings(settings), [settings])
+  useEffect(() => applyAppearance(settings.appearance), [settings.appearance])
 
   const update = (changes: Partial<Settings>) => setSettings((s) => ({ ...s, ...changes }))
 

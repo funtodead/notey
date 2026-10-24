@@ -10,7 +10,7 @@
   flex-direction: column;
   border-radius: 32px 32px 0 0;
   background: var(--surface);
-  box-shadow: 0 -12px 30px rgba(96, 82, 160, 0.18), inset 0 6px 12px rgba(255, 255, 255, 0.6);
+  box-shadow: var(--sheet-shadow);
   transition: top 0.3s ease-out;
 }
 
@@ -139,10 +139,4 @@
   font-size: 15px;
   font-weight: 700;
   color: var(--muted);
-}
-
-@media (prefers-color-scheme: dark) {
-  .day-sheet {
-    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.5), inset 0 6px 12px rgba(255, 255, 255, 0.06);
-  }
 }

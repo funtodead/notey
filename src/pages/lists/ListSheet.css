@@ -33,7 +33,7 @@
   height: 34px;
   border-radius: 50%;
   background: var(--dot);
-  box-shadow: inset -2px -3px 5px rgba(0, 0, 0, 0.18), inset 2px 2px 4px rgba(255, 255, 255, 0.55);
+  box-shadow: var(--dot-shadow);
 }
 
 .list-sheet-colors .list-sheet-color-on {

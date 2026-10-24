@@ -22,6 +22,10 @@
   color: var(--muted);
 }
 
+.settings-group .segmented button {
+  flex: 1;
+}
+
 .settings-footnote {
   margin: 0 6px;
   font-size: 13px;

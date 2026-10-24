@@ -1,7 +1,16 @@
+/* Ionic's own overlays (action sheets, alerts) pick up the app's colors. */
 :root {
   --ion-background-color: var(--bg);
   --ion-text-color: var(--text);
   --ion-font-family: var(--font-body);
+  --ion-overlay-background-color: var(--surface);
+  --ion-color-primary: var(--accent-text);
+  --ion-color-danger: var(--danger);
+  --ion-border-color: var(--line);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 body {

@@ -68,8 +68,12 @@ export interface EntityRef {
   id: string
 }
 
+export type Appearance = 'dark' | 'light' | 'system'
+
 export interface Settings {
   groqKey: string
+  /** Dark when not set. */
+  appearance?: Appearance
   /** ISO timestamp of the last backup export. */
   lastBackupAt?: string
 }

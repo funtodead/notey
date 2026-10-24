@@ -4,6 +4,7 @@ import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { IconButton } from '../../components/ui/IconButton'
 import { ApiKeyRow } from './ApiKeyRow'
+import { AppearanceRow } from './AppearanceRow'
 import { BackupRow } from './BackupRow'
 import { CategoriesEditor } from './CategoriesEditor'
 import { IntegrationsRow } from './IntegrationsRow'
@@ -18,6 +19,7 @@ export default function Settings() {
       <div className="settings">
         <PageHeader size="medium" title="Settings" start={<IconButton icon="back" label="Back to Today" onClick={back} />} />
         <ApiKeyRow />
+        <AppearanceRow />
         <IntegrationsRow />
         <CategoriesEditor />
         <BackupRow />

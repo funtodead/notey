@@ -20,7 +20,7 @@
   align-items: center;
   justify-content: center;
   background: var(--ok-dot);
-  color: #221f33;
+  color: var(--on-dot);
 }
 
 .filed-result-title {
