@@ -1,0 +1,38 @@
+/* Stays at the top while the months scroll under it; reaches up behind the notch. */
+.calendar-header {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  margin: calc(-1 * (env(safe-area-inset-top) + 10px)) calc(-1 * var(--gutter)) 0;
+  padding: calc(env(safe-area-inset-top) + 10px) var(--gutter) 6px;
+  background: var(--bg);
+}
+
+.calendar-sheet-space {
+  flex: none;
+  height: 30vh;
+}
+
+.calendar-legend {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.calendar-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.calendar-legend > span > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--dot);
+}

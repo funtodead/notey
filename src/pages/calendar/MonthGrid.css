@@ -1,0 +1,33 @@
+.month-grid {
+  /* Clear of the sticky calendar header when scrolled to. */
+  scroll-margin-top: calc(env(safe-area-inset-top) + 70px);
+}
+
+.month-grid h2 {
+  margin: 4px 0 0 4px;
+  font-size: 22px;
+  line-height: 28px;
+}
+
+.month-grid h2 span {
+  color: var(--muted);
+}
+
+.month-grid-weekdays,
+.month-grid-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.month-grid-weekdays {
+  margin-top: 10px;
+  height: 16px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.month-grid-days {
+  margin-top: 6px;
+}

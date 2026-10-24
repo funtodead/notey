@@ -1,0 +1,89 @@
+.day-cell {
+  min-width: 0;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--text);
+}
+
+.day-cell-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.day-cell-past {
+  color: var(--muted);
+}
+
+.day-cell-selected {
+  color: var(--accent-text);
+}
+
+.day-cell-selected .day-cell-number {
+  background: var(--surface);
+  box-shadow: var(--clay-sm);
+  font-weight: 600;
+}
+
+.day-cell-today .day-cell-number {
+  background: var(--accent);
+  box-shadow: var(--accent-clay);
+  color: #fff;
+  font-weight: 600;
+}
+
+.day-cell-today.day-cell-selected .day-cell-number {
+  box-shadow: var(--accent-clay), 0 0 0 3px var(--bg), 0 0 0 5px var(--accent-text);
+}
+
+.day-cell-dots {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+
+.day-cell-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+
+/* Multi-day bar: one segment per cell, joined edge to edge; the label spills over the next cells. */
+.day-cell-span {
+  align-self: stretch;
+  height: 12px;
+  padding-left: 6px;
+  background: var(--tint, transparent);
+  color: var(--ink);
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 800;
+  text-align: left;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* Above the following segments, so its label shows across them. */
+.day-cell-span-start {
+  z-index: 2;
+  margin-left: 4px;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+.day-cell-span-end {
+  margin-right: 4px;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}

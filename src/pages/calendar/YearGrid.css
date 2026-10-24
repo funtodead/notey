@@ -1,0 +1,73 @@
+.year-grid h2 {
+  margin: 14px 4px 10px;
+  font-size: 26px;
+}
+
+.year-grid-months {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.year-month {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 6px;
+  border-radius: 18px;
+  text-align: left;
+}
+
+.year-month-name {
+  padding-left: 4px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.year-month-past .year-month-name {
+  color: var(--muted);
+}
+
+.year-month-current {
+  box-shadow: 0 0 0 2px var(--accent), var(--clay-sm);
+}
+
+.year-month-current .year-month-name {
+  color: var(--accent-text);
+}
+
+.year-month-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-auto-rows: 13px;
+  justify-items: center;
+  align-items: center;
+}
+
+.year-month-days span {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--muted);
+}
+
+.year-month-days .year-day-past {
+  opacity: 0.6;
+}
+
+.year-month-days .year-day-busy {
+  background: var(--dot);
+  color: #221f33;
+  opacity: 1;
+}
+
+.year-month-days .year-day-today {
+  background: var(--accent);
+  color: #fff;
+}

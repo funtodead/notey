@@ -33,6 +33,29 @@
   font-weight: 700;
 }
 
+.item-row-labeled {
+  height: 46px;
+  border-radius: 16px;
+  padding-right: 12px;
+  box-shadow: var(--row-clay);
+}
+
+.item-category {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.item-category span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+
 .item-done .item-title {
   text-decoration: line-through;
   opacity: 0.8;
