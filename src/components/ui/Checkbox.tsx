@@ -15,7 +15,11 @@ export function Checkbox({ checked, label, onChange }: CheckboxProps) {
       className="checkbox"
       aria-pressed={checked}
       aria-label={(checked ? 'Mark as not done: ' : 'Mark as done: ') + label}
-      onClick={onChange}
+      onClick={(e) => {
+        // The row around a checkbox may open on tap; checking off shouldn't.
+        e.stopPropagation()
+        onChange()
+      }}
     >
       <span className={`checkbox-box ${checked ? 'checkbox-checked' : ''}`}>
         {checked && <Icon name="check" size={16} strokeWidth={3.2} />}

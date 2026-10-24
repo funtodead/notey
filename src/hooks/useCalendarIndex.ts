@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 
 import { addDays } from '../lib/dates'
+import { occursOn } from '../lib/recurrence'
 import type { ColorKey } from '../types/models'
 import { useCategories } from './useCategories'
 import type { SpanItem } from './useDay'
@@ -13,8 +14,8 @@ export interface DayInfo {
   span?: { item: SpanItem; color: ColorKey }
 }
 
-/** What each date has on it, for drawing the month and year grids. */
-export function useCalendarIndex() {
+/** What each date between `from` and `to` has on it, for drawing the month and year grids. */
+export function useCalendarIndex(from: string, to: string) {
   const { items } = useStore().state
   const { byId } = useCategories()
 
@@ -25,6 +26,10 @@ export function useCalendarIndex() {
       if (!info) index.set(date, (info = { colors: [] }))
       return info
     }
+    const addColor = (date: string, color: ColorKey) => {
+      const info = at(date)
+      if (info.colors.length < 3 && !info.colors.includes(color)) info.colors.push(color)
+    }
 
     for (const item of items) {
       const color = byId.get(item.categoryId)?.color ?? 'lavender'
@@ -33,11 +38,15 @@ export function useCalendarIndex() {
           const info = at(day)
           info.span ??= { item: item as SpanItem, color }
         }
+      } else if (item.repeat) {
+        const last = item.repeat.until && item.repeat.until < to ? item.repeat.until : to
+        for (let day = item.date > from ? item.date : from; day <= last; day = addDays(day, 1)) {
+          if (occursOn(item, day)) addColor(day, color)
+        }
       } else {
-        const info = at(item.date)
-        if (info.colors.length < 3 && !info.colors.includes(color)) info.colors.push(color)
+        addColor(item.date, color)
       }
     }
     return index
-  }, [items, byId])
+  }, [items, byId, from, to])
 }

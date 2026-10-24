@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 
 import type { MicSession } from '../../hooks/useMicSession'
 import type { EntityRef } from '../../types/models'
+import { EditFiled } from '../../components/items/EditFiled'
 import { Composer } from './Composer'
-import { EditFiled } from './EditFiled'
 import { MessageList } from './MessageList'
 import { MicError } from './MicError'
 import { MicHeader } from './MicHeader'
@@ -52,7 +52,7 @@ export default function Mic({ session, onClose }: MicProps) {
       <Composer session={session} text={text} onTextChange={setText} onSend={send} />
 
       <EditFiled
-        target={editing}
+        entity={editing?.ref ?? null}
         onClose={() => setEditing(null)}
         onSave={(draft) => editing && session.saveEdit(editing.messageId, editing.ref, draft)}
         onRemove={() => editing && session.removeFiled(editing.messageId, editing.ref)}

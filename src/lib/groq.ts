@@ -14,6 +14,9 @@ export interface FiledEntry {
   time: string | null
   list: string | null
   list_emoji: string | null
+  repeat: 'daily' | 'weekly' | 'monthly' | 'yearly' | null
+  repeat_interval: number | null
+  repeat_until: string | null
 }
 
 export interface FilingContext {
@@ -73,8 +76,24 @@ export async function fileText(apiKey: string, text: string, context: FilingCont
             time: nullable('string'),
             list: nullable('string'),
             list_emoji: nullable('string'),
+            repeat: { type: ['string', 'null'], enum: ['daily', 'weekly', 'monthly', 'yearly', null] },
+            repeat_interval: nullable('integer'),
+            repeat_until: nullable('string'),
           },
-          required: ['type', 'title', 'details', 'category', 'date', 'end_date', 'time', 'list', 'list_emoji'],
+          required: [
+            'type',
+            'title',
+            'details',
+            'category',
+            'date',
+            'end_date',
+            'time',
+            'list',
+            'list_emoji',
+            'repeat',
+            'repeat_interval',
+            'repeat_until',
+          ],
           additionalProperties: false,
         },
       },
@@ -123,6 +142,14 @@ Examples:
 - "pack sunscreen and a charger for Eilat" → 2 list items in "Trip packing"
 - "gift idea: photo book" → note
 - "plumber Marco 06 12 34 56 78" → note "Plumber Marco", details "06 12 34 56 78"
+- "gym every Monday at 7" → event "Gym", repeat weekly, interval 1, date = the next Monday, time 07:00
+- "pay rent on the 1st of every month" → task "Pay rent", repeat monthly, date = the next 1st
+- "water the plants every other day" → task, repeat daily, interval 2, date = today
+
+Repeating:
+- Only tasks and events repeat. Set repeat (daily, weekly, monthly, yearly) and repeat_interval (1 = every, 2 = every other, 3 = every third…), with date = the first occurrence, today or later.
+- repeat_until is the last date when an end is given ("until December" → the last day of December), else null.
+- Things that happen once have repeat, repeat_interval and repeat_until null.
 
 Rules:
 - Dates are YYYY-MM-DD, resolved from today (e.g. "Tuesday" = the next Tuesday). Times are 24h HH:mm. Use null when not given.

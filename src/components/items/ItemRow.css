@@ -1,5 +1,5 @@
 .item-row {
-  height: 44px;
+  min-height: 44px;
   border-radius: 14px;
   background: var(--tint);
   display: flex;
@@ -23,9 +23,15 @@
   font-weight: 600;
 }
 
-.item-title {
+.item-text {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.item-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -33,8 +39,17 @@
   font-weight: 700;
 }
 
+.item-repeat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.8;
+}
+
 .item-row-labeled {
-  height: 46px;
+  min-height: 46px;
   border-radius: 16px;
   padding-right: 12px;
   box-shadow: var(--row-clay);

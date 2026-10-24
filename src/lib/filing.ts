@@ -1,6 +1,7 @@
-import type { Bundle, ColorKey, EntityRef, Item, List, StoreData } from '../types/models'
+import type { Bundle, ColorKey, EntityRef, Item, List, Repeat, StoreData } from '../types/models'
 import { formatMediumDate } from './dates'
 import type { FiledEntry } from './groq'
+import { repeatLabel } from './recurrence'
 
 const LIST_COLORS: ColorKey[] = ['green', 'blue', 'amber', 'rose', 'aqua', 'lavender', 'coral', 'sand']
 
@@ -47,6 +48,10 @@ export function toBundle(entries: FiledEntry[], state: StoreData, today: string)
       const item: Item = { id, kind: entry.type, title: entry.title, categoryId, date, done: false, createdAt }
       if (isDate(entry.end_date) && entry.end_date > date) item.endDate = entry.end_date
       if (isTime(entry.time)) item.time = entry.time
+      if (entry.repeat && !item.endDate) {
+        item.repeat = { freq: entry.repeat, interval: Math.max(1, entry.repeat_interval ?? 1) }
+        if (isDate(entry.repeat_until) && entry.repeat_until >= date) item.repeat.until = entry.repeat_until
+      }
       bundle.items.push(item)
       refs.push({ kind: 'item', id })
     }
@@ -58,7 +63,7 @@ export interface FiledSummary {
   title: string
   /** "Today · Personal", "Tue 27 Oct, 15:00 · Work", "Lists › Shopping" */
   where: string
-  icon: 'today' | 'calendar' | 'notes' | 'lists'
+  icon: 'today' | 'calendar' | 'repeat' | 'notes' | 'lists'
   color: ColorKey
 }
 
@@ -70,15 +75,17 @@ export function describeRef(ref: EntityRef, state: StoreData, today: string): Fi
     const item = state.items.find((i) => i.id === ref.id)
     if (!item) return null
     const cat = category(item.categoryId)
-    const day = item.endDate
-      ? `${formatMediumDate(item.date)} – ${formatMediumDate(item.endDate)}`
-      : item.date === today
-        ? 'Today'
-        : formatMediumDate(item.date)
+    const day = item.repeat
+      ? repeatLabel(item)
+      : item.endDate
+        ? `${formatMediumDate(item.date)} – ${formatMediumDate(item.endDate)}`
+        : item.date === today
+          ? 'Today'
+          : formatMediumDate(item.date)
     return {
       title: item.title,
       where: `${day}${item.time ? `, ${item.time}` : ''} · ${cat?.name ?? ''}`,
-      icon: item.date === today && !item.endDate ? 'today' : 'calendar',
+      icon: item.repeat ? 'repeat' : item.date === today && !item.endDate ? 'today' : 'calendar',
       color: cat?.color ?? 'lavender',
     }
   }
@@ -104,6 +111,8 @@ export interface Draft {
   date: string
   listId: string
   categoryId: string
+  /** For a dated item; null = happens once. */
+  repeat: Repeat | null
 }
 
 export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft {
@@ -113,9 +122,12 @@ export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft
     date: today,
     listId: state.lists[0]?.id ?? '',
     categoryId: state.categories[0].id,
+    repeat: null,
   }
   const item = ref.kind === 'item' && state.items.find((i) => i.id === ref.id)
-  if (item) return { ...base, title: item.title, date: item.date, categoryId: item.categoryId }
+  if (item) {
+    return { ...base, title: item.title, date: item.date, categoryId: item.categoryId, repeat: item.repeat ?? null }
+  }
   const note = ref.kind === 'note' && state.notes.find((n) => n.id === ref.id)
   if (note) return { ...base, title: note.text, dest: 'note', categoryId: note.categoryId }
   const listItem = ref.kind === 'listItem' && state.listItems.find((li) => li.id === ref.id)
@@ -149,6 +161,8 @@ export function refile(ref: EntityRef, draft: Draft, state: StoreData): { bundle
     date: draft.date,
   }
   if (item.endDate && item.endDate <= item.date) delete item.endDate
+  if (draft.repeat && !item.endDate) item.repeat = draft.repeat
+  else delete item.repeat
   return { bundle: { items: [item] }, ref: { kind: 'item', id } }
 }
 

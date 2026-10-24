@@ -5,15 +5,24 @@ import { useStore } from '../../hooks/useStore'
 import { useTodayDate } from '../../hooks/useTodayDate'
 import { addDays, formatMediumDate } from '../../lib/dates'
 import { draftFor, type Draft } from '../../lib/filing'
-import type { EntityRef } from '../../types/models'
+import type { EntityRef, Repeat } from '../../types/models'
 import './EditFiled.css'
 
 interface EditFiledProps {
-  target: { messageId: string; ref: EntityRef } | null
+  /** The record being fixed; null when the sheet is closed. */
+  entity: EntityRef | null
   onClose: () => void
   onSave: (draft: Draft) => void
   onRemove: () => void
 }
+
+const REPEATS: { id: Repeat['freq'] | 'never'; label: string }[] = [
+  { id: 'never', label: 'Never' },
+  { id: 'daily', label: 'Daily' },
+  { id: 'weekly', label: 'Weekly' },
+  { id: 'monthly', label: 'Monthly' },
+  { id: 'yearly', label: 'Yearly' },
+]
 
 const DESTINATIONS: { id: Draft['dest']; label: string }[] = [
   { id: 'day', label: 'Today' },
@@ -21,8 +30,8 @@ const DESTINATIONS: { id: Draft['dest']; label: string }[] = [
   { id: 'list', label: 'List' },
 ]
 
-/** "Fix this item" sheet: rename a filed thing, move it to another place, day, list or category. */
-export function EditFiled({ target, onClose, onSave, onRemove }: EditFiledProps) {
+/** "Fix this item" sheet: rename a thing, move it to another place, day, list or category, or make it repeat. */
+export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps) {
   const { state } = useStore()
   const today = useTodayDate()
   const [draft, setDraft] = useState<Draft | null>(null)
@@ -34,10 +43,10 @@ export function EditFiled({ target, onClose, onSave, onRemove }: EditFiledProps)
   return (
     <IonModal
       className="edit-filed-modal"
-      isOpen={!!target}
+      isOpen={!!entity}
       breakpoints={[0, 1]}
       initialBreakpoint={1}
-      onWillPresent={() => target && setDraft(draftFor(target.ref, state, today))}
+      onWillPresent={() => entity && setDraft(draftFor(entity, state, today))}
       onDidDismiss={onClose}
     >
       {draft && (
@@ -95,6 +104,30 @@ export function EditFiled({ target, onClose, onSave, onRemove }: EditFiledProps)
                   {draft.date !== today && draft.date !== tomorrow ? formatMediumDate(draft.date) : 'Pick date…'}
                   <input type="date" value={draft.date} onChange={(e) => e.target.value && set({ date: e.target.value })} />
                 </label>
+              </div>
+            </fieldset>
+          )}
+
+          {draft.dest === 'day' && (
+            <fieldset>
+              <legend>Repeat</legend>
+              <div className="edit-filed-chips">
+                {REPEATS.map((r) => {
+                  const on = (draft.repeat?.freq ?? 'never') === r.id
+                  return (
+                    <Chip
+                      key={r.id}
+                      on={on}
+                      onClick={() =>
+                        set({
+                          repeat: r.id === 'never' ? null : { ...draft.repeat, freq: r.id, interval: draft.repeat?.interval ?? 1 },
+                        })
+                      }
+                    >
+                      {r.label}
+                    </Chip>
+                  )
+                })}
               </div>
             </fieldset>
           )}

@@ -17,12 +17,12 @@ type View = 'month' | 'year'
 
 export default function Calendar() {
   const today = useTodayDate()
-  const index = useCalendarIndex()
+  const thisYear = Number(today.slice(0, 4))
+  const index = useCalendarIndex(`${thisYear}-01-01`, `${thisYear + 1}-12-31`)
   const { categories } = useCategories()
   const [view, setView] = useState<View>('month')
   const [selected, setSelected] = useState(today)
   const [expanded, setExpanded] = useState(false)
-  const thisYear = Number(today.slice(0, 4))
   const [scrollTo, setScrollTo] = useState(() => monthKey(thisYear, Number(today.slice(5, 7)) - 1))
   const months = useRef(new Map<string, HTMLElement>())
 

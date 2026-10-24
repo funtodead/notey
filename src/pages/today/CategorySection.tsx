@@ -3,7 +3,13 @@ import { useItemActions } from '../../hooks/useItemActions'
 import type { Category, Item } from '../../types/models'
 import './CategorySection.css'
 
-export function CategorySection({ category, items }: { category: Category; items: Item[] }) {
+interface CategorySectionProps {
+  category: Category
+  items: Item[]
+  onOpen: (item: Item) => void
+}
+
+export function CategorySection({ category, items, onOpen }: CategorySectionProps) {
   const { toggleDone, remove } = useItemActions()
   const tasks = items.filter((i) => i.kind === 'task')
 
@@ -19,7 +25,13 @@ export function CategorySection({ category, items }: { category: Category; items
         )}
       </div>
       {items.map((item) => (
-        <ItemRow key={item.id} item={item} onToggle={() => toggleDone(item)} onDelete={() => remove(item)} />
+        <ItemRow
+          key={item.id}
+          item={item}
+          onToggle={() => toggleDone(item)}
+          onDelete={() => remove(item)}
+          onOpen={() => onOpen(item)}
+        />
       ))}
     </section>
   )

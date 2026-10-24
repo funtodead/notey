@@ -20,6 +20,20 @@ export interface Item {
   time?: string
   done: boolean
   createdAt: string
+  /** Makes `date` the first of a series. */
+  repeat?: Repeat
+  /** Occurrences checked off, for repeating tasks (`done` is unused for those). */
+  doneDates?: string[]
+  /** Occurrences deleted on their own ("only this one"). */
+  skipDates?: string[]
+}
+
+export interface Repeat {
+  freq: 'daily' | 'weekly' | 'monthly' | 'yearly'
+  /** 1 = every, 2 = every other, … */
+  interval: number
+  /** YYYY-MM-DD, last possible occurrence */
+  until?: string
 }
 
 export interface Note {

@@ -1,6 +1,7 @@
 import { createGesture } from '@ionic/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import { EditFiled } from '../../components/items/EditFiled'
 import { ItemRow } from '../../components/items/ItemRow'
 import { Icon } from '../../components/ui/Icon'
 import { useCategories } from '../../hooks/useCategories'
@@ -23,7 +24,8 @@ interface DaySheetProps {
 export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
   const { items, spans } = useDay(date)
   const { byId } = useCategories()
-  const { toggleDone, remove } = useItemActions()
+  const actions = useItemActions()
+  const [editing, setEditing] = useState<Item | null>(null)
   const handleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -50,8 +52,9 @@ export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
       key={item.id}
       item={item}
       category={byId.get(item.categoryId)}
-      onToggle={() => toggleDone(item)}
-      onDelete={() => remove(item)}
+      onToggle={() => actions.toggleDone(item)}
+      onDelete={() => actions.remove(item)}
+      onOpen={() => setEditing(item)}
     />
   )
 
@@ -95,6 +98,12 @@ export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
           {total === 0 && <p className="day-sheet-empty">Nothing planned. Tap the mic to add something.</p>}
         </div>
       </section>
+      <EditFiled
+        entity={editing && { kind: 'item', id: editing.id }}
+        onClose={() => setEditing(null)}
+        onSave={(draft) => editing && actions.edit(editing, draft)}
+        onRemove={() => editing && actions.removeAll(editing)}
+      />
     </>
   )
 }

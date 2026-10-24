@@ -2,14 +2,14 @@ import { useMemo } from 'react'
 
 import { useStore } from './useStore'
 
-/** Unfinished tasks from days before `today`, oldest first. */
+/** Unfinished tasks from days before `today`, oldest first. Repeating tasks just come round again. */
 export function useOverdue(today: string) {
   const { items } = useStore().state
 
   return useMemo(
     () =>
       items
-        .filter((i) => i.kind === 'task' && !i.done && !i.endDate && i.date < today)
+        .filter((i) => i.kind === 'task' && !i.done && !i.endDate && !i.repeat && i.date < today)
         .sort((a, b) => a.date.localeCompare(b.date)),
     [items, today],
   )
