@@ -1,20 +1,10 @@
 import { IonModal } from '@ionic/react'
 import { useState } from 'react'
 
-import type { ColorKey, List } from '../../types/models'
+import { COLORS } from '../../lib/colors'
+import type { List } from '../../types/models'
 import '../../components/ui/Sheet.css'
 import './ListSheet.css'
-
-const COLORS: { key: ColorKey; name: string }[] = [
-  { key: 'coral', name: 'Peach' },
-  { key: 'blue', name: 'Sky' },
-  { key: 'green', name: 'Mint' },
-  { key: 'amber', name: 'Lemon' },
-  { key: 'lavender', name: 'Lilac' },
-  { key: 'rose', name: 'Rose' },
-  { key: 'aqua', name: 'Aqua' },
-  { key: 'sand', name: 'Sand' },
-]
 
 const EMOJIS = ['🎁', '🛒', '🧳', '📚', '📦', '💼', '🍳', '🏋️', '🎬', '🌱', '🎵', '🐶', '✈️', '🏠', '💡', '🎨', '🧾', '⭐']
 

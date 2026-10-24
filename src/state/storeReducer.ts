@@ -1,4 +1,4 @@
-import type { Bundle, EntityRef, Item, List, ListItem, Note, StoreData } from '../types/models'
+import type { Bundle, Category, EntityRef, Item, List, ListItem, Note, StoreData } from '../types/models'
 
 export const initialData: StoreData = {
   categories: [
@@ -22,12 +22,25 @@ export type StoreAction =
   | { type: 'listItems/update'; id: string; changes: Partial<ListItem> }
   | { type: 'entities/add'; bundle: Bundle }
   | { type: 'entities/remove'; refs: EntityRef[] }
+  | { type: 'categories/add'; category: Category }
+  | { type: 'categories/update'; id: string; changes: Partial<Category> }
+  | { type: 'categories/remove'; id: string }
+  /** Restoring a backup. */
+  | { type: 'store/replace'; data: StoreData }
 
 const updateById = <T extends { id: string }>(records: T[], id: string, changes: Partial<T>) =>
   records.map((r) => (r.id === id ? { ...r, ...changes } : r))
 
 export function storeReducer(state: StoreData, action: StoreAction): StoreData {
   switch (action.type) {
+    case 'categories/add':
+      return { ...state, categories: [...state.categories, action.category] }
+    case 'categories/update':
+      return { ...state, categories: updateById(state.categories, action.id, action.changes) }
+    case 'categories/remove':
+      return { ...state, categories: state.categories.filter((c) => c.id !== action.id) }
+    case 'store/replace':
+      return action.data
     case 'notes/update':
       return { ...state, notes: updateById(state.notes, action.id, action.changes) }
     case 'lists/update':

@@ -70,4 +70,6 @@ export interface EntityRef {
 
 export interface Settings {
   groqKey: string
+  /** ISO timestamp of the last backup export. */
+  lastBackupAt?: string
 }

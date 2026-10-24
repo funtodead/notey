@@ -1,0 +1,31 @@
+/* No tab bar on Settings, so less room is needed at the bottom. */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: calc(40px - var(--tabbar-space));
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-heading {
+  margin: 0 0 0 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.settings-footnote {
+  margin: 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--muted);
+}
