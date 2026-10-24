@@ -1,0 +1,31 @@
+.notes-art {
+  position: relative;
+  width: 210px;
+  height: 170px;
+}
+
+.notes-art-back {
+  position: absolute;
+  left: 30px;
+  top: 30px;
+  width: 112px;
+  height: 112px;
+  border-radius: 30px;
+  background: var(--dot);
+  box-shadow: var(--ball-shadow);
+  transform: rotate(-10deg);
+}
+
+.notes-art-front {
+  position: absolute;
+  left: 70px;
+  top: 18px;
+  width: 118px;
+  height: 118px;
+  border-radius: 32px;
+  transform: rotate(6deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-text);
+}

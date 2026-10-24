@@ -1,0 +1,68 @@
+.list-sheet-name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.list-sheet-name input {
+  flex: 1;
+  min-width: 0;
+  font: 600 19px var(--font-display);
+}
+
+.list-sheet-preview {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.list-sheet-colors {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.list-sheet-colors button {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: inset -2px -3px 5px rgba(0, 0, 0, 0.18), inset 2px 2px 4px rgba(255, 255, 255, 0.55);
+}
+
+.list-sheet-colors .list-sheet-color-on {
+  box-shadow: 0 0 0 3px var(--surface), 0 0 0 6px var(--accent-text);
+}
+
+.list-sheet-emojis {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.list-sheet-emojis button {
+  height: 44px;
+  border-radius: 14px;
+  background: var(--bg);
+  font-size: 22px;
+  line-height: 1;
+}
+
+.list-sheet-emojis .list-sheet-emoji-on {
+  background: var(--sunken);
+  box-shadow: var(--pressed), var(--focus-ring);
+}
+
+.list-sheet-note {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--muted);
+}

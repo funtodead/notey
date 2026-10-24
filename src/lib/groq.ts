@@ -6,6 +6,8 @@ const SPEECH_MODEL = 'whisper-large-v3-turbo'
 export interface FiledEntry {
   type: 'task' | 'event' | 'note' | 'list_item'
   title: string
+  /** A note's extra details, or a list item's quantity. */
+  details: string | null
   category: string
   date: string | null
   end_date: string | null
@@ -64,6 +66,7 @@ export async function fileText(apiKey: string, text: string, context: FilingCont
           properties: {
             type: { type: 'string', enum: ['task', 'event', 'note', 'list_item'] },
             title: { type: 'string' },
+            details: nullable('string'),
             category: { type: 'string', enum: context.categories.map((c) => c.id) },
             date: nullable('string'),
             end_date: nullable('string'),
@@ -71,7 +74,7 @@ export async function fileText(apiKey: string, text: string, context: FilingCont
             list: nullable('string'),
             list_emoji: nullable('string'),
           },
-          required: ['type', 'title', 'category', 'date', 'end_date', 'time', 'list', 'list_emoji'],
+          required: ['type', 'title', 'details', 'category', 'date', 'end_date', 'time', 'list', 'list_emoji'],
           additionalProperties: false,
         },
       },
@@ -110,7 +113,8 @@ Split the message into separate things, in the order mentioned, and file each as
 Rules:
 - Dates are YYYY-MM-DD, resolved from today (e.g. "Tuesday" = the next Tuesday). Times are 24h HH:mm. Use null when not given.
 - Notes and list items have date, end_date and time null.
-- Titles are short and capitalized, without the date or time words, in the user's language. Keep phone numbers and names exactly.
+- Titles are short and capitalized, without the date or time words, in the user's language.
+- details: for a note, anything beyond the title (who recommended it, phone numbers, passwords), kept exactly as said; for a list item, the quantity if given ("2 L", "12"); otherwise null.
 - category is the id of the best fit: ${categories.map((c) => `${c.id} (${c.name})`).join(', ')}.
 - Existing lists: ${lists.length ? lists.join(', ') : 'none'}. Reuse an existing list name exactly when it fits.
 - list_emoji: one emoji for a list that doesn't exist yet, otherwise null.`

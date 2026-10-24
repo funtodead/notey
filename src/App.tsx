@@ -4,6 +4,7 @@ import { Navigate, Route } from 'react-router-dom'
 
 import { TabBar } from './components/layout/TabBar'
 import Calendar from './pages/calendar/Calendar'
+import ListDetail from './pages/lists/ListDetail'
 import Lists from './pages/lists/Lists'
 import Notes from './pages/notes/Notes'
 import Settings from './pages/settings/Settings'
@@ -24,6 +25,7 @@ export default function App() {
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/notes" element={<Notes />} />
                 <Route path="/lists" element={<Lists />} />
+                <Route path="/lists/:id" element={<ListDetail />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/" element={<Navigate to="/today" replace />} />
               </IonRouterOutlet>

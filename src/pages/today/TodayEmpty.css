@@ -1,17 +1,3 @@
-.today-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 14px;
-  padding: 40px 6px 0;
-}
-
-.today-empty h2 {
-  font-size: 28px;
-}
-
-/* Sun in a clay circle, with one ball per category color around it. */
 .today-empty-art {
   position: relative;
   width: 210px;
@@ -31,55 +17,10 @@
   color: var(--accent-text);
 }
 
-.today-empty-ball {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--dot);
-  box-shadow: var(--ball-shadow);
-}
-
-.today-empty-ball:nth-of-type(1) { left: 6px; top: 104px; width: 58px; height: 58px; }
-.today-empty-ball:nth-of-type(2) { left: 160px; top: 0; width: 44px; height: 44px; }
-.today-empty-ball:nth-of-type(3) { left: 156px; top: 116px; width: 38px; height: 38px; }
-.today-empty-ball:nth-of-type(4) { left: 22px; top: 18px; width: 26px; height: 26px; }
-
-.today-empty-text {
-  margin: 0;
-  max-width: 300px;
-  font-size: 16px;
-  line-height: 1.45;
-  font-weight: 600;
-  color: var(--muted);
-}
-
-.today-empty-label {
-  margin: 10px 0 0;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 .today-empty-chips {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
   max-width: 320px;
-}
-
-.today-empty-hint {
-  position: fixed;
-  z-index: 5;
-  left: 0;
-  right: 0;
-  bottom: calc(env(safe-area-inset-bottom) + 112px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  color: var(--accent-text);
-  font-size: 14px;
-  font-weight: 800;
 }

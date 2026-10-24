@@ -1,4 +1,4 @@
-import type { Bundle, EntityRef, Item, StoreData } from '../types/models'
+import type { Bundle, EntityRef, Item, List, ListItem, Note, StoreData } from '../types/models'
 
 export const initialData: StoreData = {
   categories: [
@@ -17,11 +17,23 @@ export type StoreAction =
   | { type: 'items/add'; items: Item[] }
   | { type: 'items/update'; id: string; changes: Partial<Item> }
   | { type: 'items/remove'; id: string }
+  | { type: 'notes/update'; id: string; changes: Partial<Note> }
+  | { type: 'lists/update'; id: string; changes: Partial<List> }
+  | { type: 'listItems/update'; id: string; changes: Partial<ListItem> }
   | { type: 'entities/add'; bundle: Bundle }
   | { type: 'entities/remove'; refs: EntityRef[] }
 
+const updateById = <T extends { id: string }>(records: T[], id: string, changes: Partial<T>) =>
+  records.map((r) => (r.id === id ? { ...r, ...changes } : r))
+
 export function storeReducer(state: StoreData, action: StoreAction): StoreData {
   switch (action.type) {
+    case 'notes/update':
+      return { ...state, notes: updateById(state.notes, action.id, action.changes) }
+    case 'lists/update':
+      return { ...state, lists: updateById(state.lists, action.id, action.changes) }
+    case 'listItems/update':
+      return { ...state, listItems: updateById(state.listItems, action.id, action.changes) }
     case 'entities/add': {
       const { items = [], notes = [], lists = [], listItems = [] } = action.bundle
       return {
@@ -47,10 +59,7 @@ export function storeReducer(state: StoreData, action: StoreAction): StoreData {
     case 'items/add':
       return { ...state, items: [...state.items, ...action.items] }
     case 'items/update':
-      return {
-        ...state,
-        items: state.items.map((item) => (item.id === action.id ? { ...item, ...action.changes } : item)),
-      }
+      return { ...state, items: updateById(state.items, action.id, action.changes) }
     case 'items/remove':
       return { ...state, items: state.items.filter((item) => item.id !== action.id) }
   }

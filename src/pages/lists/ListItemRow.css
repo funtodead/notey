@@ -1,0 +1,58 @@
+.list-item-swipe {
+  --swipe-radius: 18px;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 52px;
+  padding-right: 16px;
+  border-radius: 18px;
+}
+
+.list-item .checkbox {
+  width: 52px;
+  height: 52px;
+}
+
+.list-item-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.list-item-new {
+  flex: none;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 11px;
+  background: var(--sunken);
+  color: var(--accent-text);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+}
+
+.list-item-qty {
+  flex: none;
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.list-item-done {
+  background: var(--sunken);
+  box-shadow: var(--well-shadow);
+}
+
+.list-item-done .list-item-text {
+  color: var(--muted);
+  text-decoration: line-through;
+}

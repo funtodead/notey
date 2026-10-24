@@ -25,7 +25,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext value={show}>
       {children}
-      {toast && <Toast message={toast.message} onUndo={toast.onUndo && undo} />}
+      {toast && <Toast {...toast} onUndo={toast.onUndo && undo} />}
     </ToastContext>
   )
 }

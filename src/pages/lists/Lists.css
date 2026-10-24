@@ -1,0 +1,13 @@
+.lists {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lists-note {
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}

@@ -1,0 +1,41 @@
+.lists-art {
+  position: relative;
+  width: 220px;
+  height: 170px;
+}
+
+.lists-art-card {
+  position: absolute;
+  left: 46px;
+  top: 12px;
+  box-sizing: border-box;
+  width: 128px;
+  height: 140px;
+  padding: 0 22px;
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 14px;
+}
+
+.lists-art-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lists-art-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--dot);
+  box-shadow: var(--ball-shadow);
+}
+
+.lists-art-line {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--sunken);
+}

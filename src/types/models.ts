@@ -24,7 +24,9 @@ export interface Item {
 
 export interface Note {
   id: string
+  /** The note's title line. */
   text: string
+  body?: string
   categoryId: string
   createdAt: string
 }
@@ -35,13 +37,18 @@ export interface List {
   emoji: string
   color: ColorKey
   createdAt: string
+  /** Created by the AI rather than from the New list sheet. */
+  byNotey?: boolean
 }
 
 export interface ListItem {
   id: string
   listId: string
   text: string
+  /** Free-form amount, e.g. "2 L" or "12". */
+  qty?: string
   done: boolean
+  createdAt?: string
 }
 
 export interface StoreData {

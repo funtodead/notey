@@ -42,6 +42,18 @@ export function addDays(iso: string, days: number) {
   return toISODate(date)
 }
 
+/** "Just now", "5 min ago", "2 h ago", "Yesterday", "Mon", "12 Oct" — for a full ISO timestamp. */
+export function formatAgo(timestamp: string, now = new Date()) {
+  const then = new Date(timestamp)
+  const minutes = Math.floor((now.getTime() - then.getTime()) / 60_000)
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} min ago`
+  const days = daysBetween(toISODate(then), toISODate(now))
+  if (days === 0) return `${Math.floor(minutes / 60)} h ago`
+  if (days === 1) return 'Yesterday'
+  return formatPastDay(toISODate(then), toISODate(now))
+}
+
 /** "Thu" within the last week, otherwise "12 Oct". */
 export function formatPastDay(iso: string, today: string) {
   const date = parseISODate(iso)

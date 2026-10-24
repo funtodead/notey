@@ -1,0 +1,39 @@
+/* Scrolls sideways, edge to edge, past the page's side padding. */
+.category-filter {
+  display: flex;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 4px var(--gutter) 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.category-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.category-filter button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.category-filter span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+
+.category-filter .category-filter-on {
+  background: var(--accent);
+  box-shadow: var(--bubble-clay);
+  color: #fff;
+}

@@ -19,8 +19,10 @@ export function toBundle(entries: FiledEntry[], state: StoreData, today: string)
     const id = crypto.randomUUID()
     const categoryId = categoryIds.has(entry.category) ? entry.category : state.categories[0].id
 
+    const details = entry.details?.trim() || undefined
+
     if (entry.type === 'note') {
-      bundle.notes.push({ id, text: entry.title, categoryId, createdAt })
+      bundle.notes.push({ id, text: entry.title, body: details, categoryId, createdAt })
       refs.push({ kind: 'note', id })
     } else if (entry.type === 'list_item') {
       const name = entry.list?.trim() || 'Shopping'
@@ -32,12 +34,13 @@ export function toBundle(entries: FiledEntry[], state: StoreData, today: string)
           emoji: entry.list_emoji ?? '📝',
           color: LIST_COLORS[lists.length % LIST_COLORS.length],
           createdAt,
+          byNotey: true,
         }
         lists.push(list)
         bundle.lists.push(list)
         refs.push({ kind: 'list', id: list.id })
       }
-      bundle.listItems.push({ id, listId: list.id, text: entry.title, done: false })
+      bundle.listItems.push({ id, listId: list.id, text: entry.title, qty: details, done: false, createdAt })
       refs.push({ kind: 'listItem', id })
     } else {
       const date = isDate(entry.date) ? entry.date : today
@@ -129,13 +132,14 @@ export function refile(ref: EntityRef, draft: Draft, state: StoreData): { bundle
   const createdAt = new Date().toISOString()
 
   if (draft.dest === 'note') {
-    return { bundle: { notes: [{ id, text: draft.title, categoryId: draft.categoryId, createdAt }] }, ref: { kind: 'note', id } }
+    const old = state.notes.find((n) => n.id === id)
+    const note = { ...(old ?? { id, createdAt }), text: draft.title, categoryId: draft.categoryId }
+    return { bundle: { notes: [note] }, ref: { kind: 'note', id } }
   }
   if (draft.dest === 'list') {
-    return {
-      bundle: { listItems: [{ id, listId: draft.listId, text: draft.title, done: false }] },
-      ref: { kind: 'listItem', id },
-    }
+    const old = state.listItems.find((li) => li.id === id)
+    const listItem = { ...(old ?? { id, done: false, createdAt }), listId: draft.listId, text: draft.title }
+    return { bundle: { listItems: [listItem] }, ref: { kind: 'listItem', id } }
   }
   const old = ref.kind === 'item' ? state.items.find((i) => i.id === id) : undefined
   const item: Item = {

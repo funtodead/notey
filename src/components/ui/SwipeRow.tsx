@@ -10,11 +10,13 @@ interface SwipeRowProps {
   /** What gets deleted, for screen readers. */
   label: string
   onDelete: () => void
+  /** e.g. to set --swipe-radius to match the row's corners. */
+  className?: string
   children: ReactNode
 }
 
 /** Swipe left to reveal a Delete button. Tapping the row while open closes it. */
-export function SwipeRow({ label, onDelete, children }: SwipeRowProps) {
+export function SwipeRow({ label, onDelete, className, children }: SwipeRowProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
 
@@ -51,7 +53,7 @@ export function SwipeRow({ label, onDelete, children }: SwipeRowProps) {
   }
 
   return (
-    <div className="swipe-row">
+    <div className={`swipe-row ${className ?? ''}`}>
       <button className="swipe-delete" aria-label={`Delete ${label}`} tabIndex={open ? 0 : -1} onClick={onDelete}>
         <Icon name="trash" size={18} />
         Delete
