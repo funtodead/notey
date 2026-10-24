@@ -105,10 +105,24 @@ function filingPrompt({ today, categories, lists }: FilingContext) {
   return `You file quick messages for Notey, a personal organizer. Today is ${weekday} ${today}.
 
 Split the message into separate things, in the order mentioned, and file each as one entry:
-- "event": an appointment, meeting, occasion or trip, usually with a time. Multi-day things (a trip Thu–Sat) are one event with date and end_date.
-- "task": something to do. If no day is mentioned, use today.
-- "list_item": something to buy, pack or collect. Put it in "list". Things to buy go to the "Shopping" list unless another list fits better.
-- "note": information to remember with no action or day: ideas, phone numbers, recommendations.
+- "event" (shown on the calendar): something that happens on a day or at a time — appointment, meeting, class, birthday, trip. Multi-day things (a trip Thu–Sat) are one event with date and end_date.
+- "task" (shown on its day): something the user has to do. If no day is mentioned, use today.
+- "list_item" (shown in a list): one thing to buy, pack, read, watch, try or collect. Several things = several entries ("milk, eggs and bread" = 3 list items). Put the list's name in "list".
+- "note": information to remember with no action and no day — a single idea, phone number, password, recommendation or fact.
+
+Lists:
+- Existing lists: ${lists.length ? lists.join(', ') : 'none'}. Reuse one when it fits by meaning ("groceries" → Shopping), with its exact name.
+- Otherwise start a new list with a short, natural name and a fitting list_emoji, e.g. things to buy → "Shopping" 🛒, packing → "Trip packing" 🧳, books → "Books to read" 📚, films and series → "To watch" 🎬, gift ideas → "Gift ideas" 🎁, places → "Places to visit" 📍.
+- When the user names things to get, pack, read or watch, prefer list items over tasks. A to-do with a day ("go shopping today") stays a task.
+
+Examples:
+- "dentist tuesday at 3" → event on the next Tuesday at 15:00
+- "call mom tomorrow" → task tomorrow
+- "buy milk and 12 eggs" → list items "Milk" and "Eggs" (details "12") in Shopping
+- "books to read: Dune and Atomic Habits" → 2 list items in "Books to read"
+- "pack sunscreen and a charger for Eilat" → 2 list items in "Trip packing"
+- "gift idea: photo book" → note
+- "plumber Marco 06 12 34 56 78" → note "Plumber Marco", details "06 12 34 56 78"
 
 Rules:
 - Dates are YYYY-MM-DD, resolved from today (e.g. "Tuesday" = the next Tuesday). Times are 24h HH:mm. Use null when not given.
@@ -116,6 +130,5 @@ Rules:
 - Titles are short and capitalized, without the date or time words, in the user's language.
 - details: for a note, anything beyond the title (who recommended it, phone numbers, passwords), kept exactly as said; for a list item, the quantity if given ("2 L", "12"); otherwise null.
 - category is the id of the best fit: ${categories.map((c) => `${c.id} (${c.name})`).join(', ')}.
-- Existing lists: ${lists.length ? lists.join(', ') : 'none'}. Reuse an existing list name exactly when it fits.
 - list_emoji: one emoji for a list that doesn't exist yet, otherwise null.`
 }
