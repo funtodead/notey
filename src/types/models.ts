@@ -51,3 +51,16 @@ export interface StoreData {
   lists: List[]
   listItems: ListItem[]
 }
+
+/** New records to add in one go, e.g. everything the AI filed from one message. */
+export type Bundle = Partial<Omit<StoreData, 'categories'>>
+
+/** Points at one stored record, so it can be shown, edited or removed later. */
+export interface EntityRef {
+  kind: 'item' | 'note' | 'list' | 'listItem'
+  id: string
+}
+
+export interface Settings {
+  groqKey: string
+}

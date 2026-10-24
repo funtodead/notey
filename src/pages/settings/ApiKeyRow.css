@@ -1,0 +1,95 @@
+.api-key {
+  padding: 16px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.api-key-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+}
+
+.api-key-header label {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.api-key-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-text);
+}
+
+.api-key-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 13px;
+  background: var(--err-tint);
+  color: var(--err-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.api-key-status > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+.api-key-ok {
+  background: var(--ok-tint);
+  color: var(--ok-ink);
+}
+
+.api-key-ok > span {
+  background: var(--ok-dot);
+}
+
+.api-key-field {
+  position: relative;
+}
+
+.api-key-field input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 48px;
+  padding: 0 52px 0 16px;
+  border: 0;
+  border-radius: 16px;
+  color: var(--text);
+  font: 800 16px var(--font-body);
+  outline: none;
+}
+
+.api-key-field button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.api-key-note {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}

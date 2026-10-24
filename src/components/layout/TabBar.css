@@ -1,3 +1,7 @@
+.tabbar-hidden :is(.tabbar-fade, .tabbar, .mic-cradle, .mic-button) {
+  display: none;
+}
+
 /* Geometry from the design's 393×136 tab bar: pill bar 68 tall, mic 76 in a 92 cradle. */
 .tabbar-fade {
   position: fixed;

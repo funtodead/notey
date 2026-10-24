@@ -1,0 +1,198 @@
+import { useEffect, useRef, useState } from 'react'
+
+import { todayISO } from '../lib/dates'
+import { emptiedLists, refile, toBundle, type Draft } from '../lib/filing'
+import { fileText, GroqError, transcribe } from '../lib/groq'
+import type { MicError, MicMessage, MicPhase } from '../types/mic'
+import type { EntityRef } from '../types/models'
+import { useRecorder } from './useRecorder'
+import { useSettings } from './useSettings'
+import { useStore } from './useStore'
+
+/**
+ * Everything behind the mic sheet: the conversation, recording, and filing what was said.
+ * Lives in the mic button (not the sheet) so the conversation survives closing the sheet.
+ */
+export function useMicSession() {
+  const { state, dispatch } = useStore()
+  const { settings } = useSettings()
+  const recorder = useRecorder()
+  const [messages, setMessages] = useState<MicMessage[]>([])
+  const [phase, setPhase] = useState<MicPhase>('idle')
+  const [error, setError] = useState<MicError | null>(null)
+  /** A recording that couldn't be transcribed yet (offline or no key). */
+  const [keptAudio, setKeptAudio] = useState<Blob | null>(null)
+
+  // Async steps finish later; they must read the store as it is then, not as it was when they started.
+  const latest = useRef({ state, settings })
+  latest.current = { state, settings }
+
+  const showError = (kind: MicError) => {
+    setError(kind)
+    setPhase('error')
+  }
+
+  const failWith = (e: unknown) => {
+    if (e instanceof GroqError) showError(e.status === 401 ? 'badkey' : 'failed')
+    else showError(e instanceof TypeError ? 'offline' : 'failed')
+  }
+
+  const setKept = (messageId: string, kept: boolean) =>
+    setMessages((ms) => ms.map((m) => (m.id === messageId && m.role === 'user' ? { ...m, kept } : m)))
+
+  const file = async (messageId: string, text: string) => {
+    const { groqKey } = latest.current.settings
+    if (!groqKey) {
+      setKept(messageId, true)
+      return showError('nokey')
+    }
+    setError(null)
+    setPhase('thinking')
+    try {
+      const today = todayISO()
+      const { categories, lists } = latest.current.state
+      const entries = await fileText(groqKey, text, {
+        today,
+        categories: categories.map(({ id, name }) => ({ id, name })),
+        lists: lists.map((l) => l.name),
+      })
+      const { bundle, refs } = toBundle(entries, latest.current.state, today)
+      dispatch({ type: 'entities/add', bundle })
+      setKept(messageId, false)
+      setMessages((ms) => [...ms, { id: crypto.randomUUID(), role: 'ai', refs, createdAt: new Date().toISOString() }])
+      setPhase('filed')
+    } catch (e) {
+      setKept(messageId, true)
+      failWith(e)
+    }
+  }
+
+  const send = (text: string) => {
+    const id = crypto.randomUUID()
+    setMessages((ms) => [...ms, { id, role: 'user', text, createdAt: new Date().toISOString(), kept: false }])
+    void file(id, text)
+  }
+
+  const transcribeAndFile = async (audio: Blob) => {
+    const { groqKey } = latest.current.settings
+    if (!groqKey) {
+      setKeptAudio(audio)
+      return showError('nokey')
+    }
+    setPhase('thinking')
+    try {
+      const text = await transcribe(groqKey, audio)
+      setKeptAudio(null)
+      if (text) send(text)
+      else setPhase('idle')
+    } catch (e) {
+      setKeptAudio(audio)
+      failWith(e)
+    }
+  }
+
+  const startRecording = async () => {
+    try {
+      await recorder.start()
+      setError(null)
+      setPhase('recording')
+    } catch {
+      showError('nomic')
+    }
+  }
+
+  const stopRecording = async () => transcribeAndFile(await recorder.stop())
+
+  const keptMessage = messages.findLast((m) => m.role === 'user' && m.kept)
+  const hasKept = !!keptAudio || !!keptMessage
+
+  const retry = () => {
+    if (keptAudio) void transcribeAndFile(keptAudio)
+    else if (keptMessage?.role === 'user') void file(keptMessage.id, keptMessage.text)
+  }
+
+  // File kept messages by themselves once the phone is back online or a key is added.
+  const retryLater = useRef(retry)
+  retryLater.current = retry
+  useEffect(() => {
+    const onOnline = () => retryLater.current()
+    window.addEventListener('online', onOnline)
+    return () => window.removeEventListener('online', onOnline)
+  }, [])
+  const hadKey = useRef(!!settings.groqKey)
+  useEffect(() => {
+    if (settings.groqKey && !hadKey.current) retryLater.current()
+    hadKey.current = !!settings.groqKey
+  }, [settings.groqKey])
+
+  const dismissError = () => {
+    setError(null)
+    setPhase('idle')
+  }
+
+  const replaceRef = (messageId: string, old: EntityRef, next: EntityRef | null) =>
+    setMessages((ms) =>
+      ms.map((m) =>
+        m.id === messageId && m.role === 'ai'
+          ? { ...m, refs: m.refs.flatMap((r) => (r.id === old.id && r.kind === old.kind ? (next ? [next] : []) : [r])) }
+          : m,
+      ),
+    )
+
+  const saveEdit = (messageId: string, ref: EntityRef, draft: Draft) => {
+    const { bundle, ref: next } = refile(ref, draft, state)
+    dispatch({ type: 'entities/remove', refs: [ref] })
+    dispatch({ type: 'entities/add', bundle })
+    replaceRef(messageId, ref, next)
+  }
+
+  const removeFiled = (messageId: string, ref: EntityRef) => {
+    dispatch({ type: 'entities/remove', refs: [ref] })
+    replaceRef(messageId, ref, null)
+  }
+
+  /** Removes everything one message filed, along with the message and what was said. */
+  const undoAll = (messageId: string) => {
+    const index = messages.findIndex((m) => m.id === messageId)
+    const message = messages[index]
+    if (message?.role !== 'ai') return
+    const lists = emptiedLists(message.refs, state).map((l) => ({ kind: 'list' as const, id: l.id }))
+    dispatch({ type: 'entities/remove', refs: [...message.refs, ...lists] })
+    setMessages((ms) => ms.filter((_, i) => i !== index && i !== index - 1))
+    setPhase('idle')
+  }
+
+  /** Called when the sheet opens: last time's result becomes part of the history. */
+  const resume = () => {
+    if (phase === 'filed') setPhase('idle')
+  }
+
+  /** Called when the sheet closes. */
+  const pause = () => {
+    if (phase === 'recording') {
+      recorder.cancel()
+      setPhase('idle')
+    }
+  }
+
+  return {
+    messages,
+    phase,
+    error,
+    hasKept,
+    levels: recorder.levels,
+    seconds: recorder.seconds,
+    send,
+    startRecording,
+    stopRecording,
+    retry,
+    dismissError,
+    saveEdit,
+    removeFiled,
+    undoAll,
+    resume,
+    pause,
+  }
+}
+
+export type MicSession = ReturnType<typeof useMicSession>

@@ -1,0 +1,128 @@
+.composer {
+  flex: none;
+  padding: 8px var(--gutter) calc(env(safe-area-inset-bottom) + 12px);
+}
+
+.composer-dock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.composer-orb-well {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--well-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Halo rings pulse out from the orb while listening. */
+.composer-recording::before,
+.composer-recording::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--halo);
+  z-index: -1;
+  animation: composer-halo 1.6s ease-out infinite;
+}
+
+.composer-recording::after {
+  animation-delay: 0.8s;
+}
+
+@keyframes composer-halo {
+  from { transform: scale(1); opacity: 0.55; }
+  to { transform: scale(1.6); opacity: 0; }
+}
+
+.composer-orb {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: var(--orb-clay);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.composer-orb:disabled {
+  opacity: 0.55;
+}
+
+.composer-orb:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.composer-stop {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: inset -2px -3px 5px rgba(40, 20, 140, 0.25);
+}
+
+.composer-hint {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.composer-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.composer-input input {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  height: 52px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 26px;
+  color: var(--text);
+  font: 700 16px var(--font-body);
+  outline: none;
+}
+
+.composer-input input:focus {
+  box-shadow: var(--pressed), var(--focus-ring);
+}
+
+.composer-send,
+.composer-voice {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.composer-send {
+  color: var(--muted);
+}
+
+.composer-send-ready {
+  background: var(--accent);
+  box-shadow: var(--bubble-clay);
+  color: #fff;
+}
+
+.composer-voice {
+  color: var(--accent-text);
+}

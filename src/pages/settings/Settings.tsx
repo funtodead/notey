@@ -3,6 +3,7 @@ import { useIonRouter } from '@ionic/react'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
 import { IconButton } from '../../components/ui/IconButton'
+import { ApiKeyRow } from './ApiKeyRow'
 
 export default function Settings() {
   const router = useIonRouter()
@@ -11,6 +12,7 @@ export default function Settings() {
   return (
     <Page>
       <PageHeader size="medium" title="Settings" start={<IconButton icon="back" label="Back to Today" onClick={back} />} />
+      <ApiKeyRow />
     </Page>
   )
 }

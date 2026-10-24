@@ -1,0 +1,37 @@
+.recording {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+  padding: 0 18px;
+  border-radius: 32px;
+}
+
+.recording-time {
+  flex: none;
+  width: 40px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+.recording-bars {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 44px;
+}
+
+.recording-bars span {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--accent);
+  transition: height 0.08s linear;
+}
+
+.recording-bars span:nth-child(3n + 1) {
+  background: var(--accent-text);
+}

@@ -25,7 +25,8 @@ export function TabBar() {
   const router = useIonRouter()
   const { pathname } = useLocation()
 
-  if (pathname === '/settings') return null
+  // Hidden rather than removed on Settings: the mic button keeps the conversation alive.
+  const hidden = pathname === '/settings'
 
   const renderTab = (tab: Tab) => {
     const active = pathname.startsWith(tab.path)
@@ -45,7 +46,7 @@ export function TabBar() {
   }
 
   return (
-    <>
+    <div className={hidden ? 'tabbar-hidden' : undefined}>
       <div className="tabbar-fade" aria-hidden="true" />
       <nav className="tabbar clay" aria-label="Main">
         {LEFT.map(renderTab)}
@@ -53,6 +54,6 @@ export function TabBar() {
         {RIGHT.map(renderTab)}
       </nav>
       <MicButton />
-    </>
+    </div>
   )
 }

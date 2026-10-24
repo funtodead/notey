@@ -31,6 +31,17 @@ export function formatShortDate(iso: string) {
   return parseISODate(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' })
 }
 
+/** "Tue 27 Oct" */
+export function formatMediumDate(iso: string) {
+  return parseISODate(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+export function addDays(iso: string, days: number) {
+  const date = parseISODate(iso)
+  date.setDate(date.getDate() + days)
+  return toISODate(date)
+}
+
 /** "Thu" within the last week, otherwise "12 Oct". */
 export function formatPastDay(iso: string, today: string) {
   const date = parseISODate(iso)

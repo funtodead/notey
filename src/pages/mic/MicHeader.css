@@ -1,0 +1,43 @@
+.mic-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px var(--gutter) 0;
+}
+
+.mic-header-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mic-header-title > span {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.mic-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.mic-status > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.mic-status-ok > span { background: var(--ok-dot); }
+.mic-status-busy > span { background: var(--accent); }
+.mic-status-err > span { background: var(--danger); }
+
+.mic-header-spacer {
+  width: 48px;
+  height: 48px;
+}

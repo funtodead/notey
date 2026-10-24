@@ -1,0 +1,50 @@
+.mic-error {
+  flex: none;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px;
+  border-radius: 24px 24px 24px 8px;
+  background: var(--err-tint);
+  box-shadow: var(--clay-tint);
+  color: var(--err-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mic-error-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mic-error-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pill-bg);
+}
+
+.mic-error-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mic-error p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.mic-error-actions {
+  display: flex;
+  gap: 10px;
+  padding-top: 4px;
+}
