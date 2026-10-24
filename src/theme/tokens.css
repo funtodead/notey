@@ -1,0 +1,85 @@
+/* Values copied from the Notey design canvas (Palette, TabBar, Today). */
+:root {
+  --bg: #efebf7;
+  --surface: #faf8ff;
+  --sunken: #e4def1;
+  --text: #2b2840;
+  --muted: #5f5a75;
+  --line: rgba(43, 40, 64, 0.08);
+  --accent: #6a58e8;
+  --accent-text: #5444d6;
+  --danger: #c93c44;
+  --well: rgba(255, 255, 255, 0.45);
+  --fade: linear-gradient(to bottom, rgba(239, 235, 247, 0), rgba(239, 235, 247, 0.92) 60%);
+
+  --clay: 10px 14px 28px rgba(96, 82, 160, 0.2), inset -5px -6px 12px rgba(96, 82, 160, 0.1),
+    inset 5px 6px 12px rgba(255, 255, 255, 0.95);
+  --clay-sm: 4px 6px 12px rgba(96, 82, 160, 0.18), inset -3px -4px 8px rgba(96, 82, 160, 0.1),
+    inset 3px 4px 8px rgba(255, 255, 255, 0.9);
+  --clay-tint: 8px 12px 24px rgba(96, 82, 160, 0.16), inset -5px -6px 12px rgba(0, 0, 0, 0.05),
+    inset 5px 6px 12px rgba(255, 255, 255, 0.7);
+  --pressed: inset 3px 4px 8px rgba(96, 82, 160, 0.2), inset -3px -4px 8px rgba(255, 255, 255, 0.85);
+  --well-shadow: inset 2px 3px 6px rgba(60, 40, 90, 0.18), inset -2px -3px 6px rgba(255, 255, 255, 0.8);
+  --cradle: 0 -6px 14px rgba(96, 82, 160, 0.1), inset 3px 6px 10px rgba(96, 82, 160, 0.16),
+    inset -3px -4px 8px rgba(255, 255, 255, 0.9);
+  --accent-clay: 0 12px 22px rgba(106, 88, 232, 0.42), inset -6px -8px 14px rgba(40, 20, 140, 0.35),
+    inset 6px 8px 14px rgba(255, 255, 255, 0.45);
+  --ball-shadow: 8px 12px 22px rgba(96, 82, 160, 0.22), inset -6px -8px 12px rgba(0, 0, 0, 0.12),
+    inset 6px 7px 12px rgba(255, 255, 255, 0.6);
+
+  --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+
+  --gutter: 20px;
+  --tabbar-space: 150px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1a27;
+    --surface: #2a2738;
+    --sunken: #151320;
+    --text: #f1eefa;
+    --muted: #aba6c2;
+    --line: rgba(255, 255, 255, 0.07);
+    --accent-text: #b3a8ff;
+    --well: rgba(0, 0, 0, 0.2);
+    --fade: linear-gradient(to bottom, rgba(28, 26, 39, 0), rgba(28, 26, 39, 0.92) 60%);
+
+    --clay: 10px 14px 28px rgba(0, 0, 0, 0.55), inset -5px -6px 12px rgba(0, 0, 0, 0.35),
+      inset 5px 6px 12px rgba(255, 255, 255, 0.07);
+    --clay-sm: 4px 6px 12px rgba(0, 0, 0, 0.5), inset -3px -4px 8px rgba(0, 0, 0, 0.3),
+      inset 3px 4px 8px rgba(255, 255, 255, 0.06);
+    --clay-tint: 8px 12px 24px rgba(0, 0, 0, 0.5), inset -5px -6px 12px rgba(0, 0, 0, 0.25),
+      inset 5px 6px 12px rgba(255, 255, 255, 0.08);
+    --pressed: inset 3px 4px 8px rgba(0, 0, 0, 0.5), inset -3px -4px 8px rgba(255, 255, 255, 0.05);
+    --well-shadow: inset 2px 3px 6px rgba(0, 0, 0, 0.45), inset -2px -3px 6px rgba(255, 255, 255, 0.06);
+    --cradle: 0 -6px 14px rgba(0, 0, 0, 0.25), inset 3px 6px 10px rgba(0, 0, 0, 0.5),
+      inset -3px -4px 8px rgba(255, 255, 255, 0.05);
+    --accent-clay: 0 12px 22px rgba(0, 0, 0, 0.5), inset -6px -8px 14px rgba(30, 10, 120, 0.45),
+      inset 6px 8px 14px rgba(255, 255, 255, 0.3);
+    --ball-shadow: 8px 12px 22px rgba(0, 0, 0, 0.5), inset -6px -8px 12px rgba(0, 0, 0, 0.25),
+      inset 6px 7px 12px rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* Category / list colors: tint = card fill, ink = text on it, dot = checkbox and calendar dots. */
+.tone-coral { --tint: #ffdccd; --ink: #7a2e14; --dot: #f98e68; }
+.tone-blue { --tint: #d4e2ff; --ink: #1c3d78; --dot: #6f98f0; }
+.tone-green { --tint: #cdefdf; --ink: #165a3f; --dot: #54c08e; }
+.tone-amber { --tint: #ffeab0; --ink: #664500; --dot: #edb532; }
+.tone-lavender { --tint: #e7dcff; --ink: #4a2a8a; --dot: #a98bf2; }
+.tone-rose { --tint: #ffd6e8; --ink: #7a1f4b; --dot: #f48fbf; }
+.tone-aqua { --tint: #cdeff5; --ink: #14505c; --dot: #5cc3d6; }
+.tone-sand { --tint: #efe3d3; --ink: #5a4127; --dot: #c9a47a; }
+
+@media (prefers-color-scheme: dark) {
+  .tone-coral { --tint: #4a2f27; --ink: #ffc7b2; --dot: #f98e68; }
+  .tone-blue { --tint: #24324d; --ink: #bcd2ff; --dot: #7fa5f7; }
+  .tone-green { --tint: #203f35; --ink: #aee9cf; --dot: #5fcb98; }
+  .tone-amber { --tint: #463a1c; --ink: #ffe08f; --dot: #f2c14e; }
+  .tone-lavender { --tint: #372c52; --ink: #d8c9ff; --dot: #b49bf7; }
+  .tone-rose { --tint: #4a2638; --ink: #ffc6df; --dot: #f48fbf; }
+  .tone-aqua { --tint: #1f3d44; --ink: #aee6f0; --dot: #62c9dc; }
+  .tone-sand { --tint: #3f3528; --ink: #ebd9c1; --dot: #c9a47a; }
+}

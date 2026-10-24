@@ -1,0 +1,9 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100%;
+  box-sizing: border-box;
+  padding: calc(env(safe-area-inset-top) + 10px) var(--gutter)
+    calc(env(safe-area-inset-bottom) + var(--tabbar-space));
+}

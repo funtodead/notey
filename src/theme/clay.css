@@ -1,0 +1,27 @@
+/* Clay depths from the design: raised (cards), small (buttons, chips), pressed (inputs, tracks), accent (mic). */
+.clay {
+  background: var(--surface);
+  box-shadow: var(--clay);
+}
+
+.clay-sm {
+  background: var(--surface);
+  box-shadow: var(--clay-sm);
+}
+
+.clay-pressed {
+  background: var(--sunken);
+  box-shadow: var(--pressed);
+}
+
+.clay-accent {
+  background: var(--accent);
+  box-shadow: var(--accent-clay);
+  color: #fff;
+}
+
+.clay-tint {
+  background: var(--tint);
+  box-shadow: var(--clay-tint);
+  color: var(--ink);
+}

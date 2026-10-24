@@ -1,33 +1,31 @@
-import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs } from '@ionic/react'
+import { IonApp, IonRouterOutlet } from '@ionic/react'
 import { IonReactHashRouter } from '@ionic/react-router'
 import { Navigate, Route } from 'react-router-dom'
-import { calendarOutline, settingsOutline } from 'ionicons/icons'
 
-import Home from './pages/Home'
-import Settings from './pages/Settings'
+import { TabBar } from './components/layout/TabBar'
+import Calendar from './pages/calendar/Calendar'
+import Lists from './pages/lists/Lists'
+import Notes from './pages/notes/Notes'
+import Settings from './pages/settings/Settings'
+import Today from './pages/today/Today'
+import { StoreProvider } from './state/StoreProvider'
 
 export default function App() {
   return (
-    <IonApp>
-      <IonReactHashRouter>
-        <IonTabs>
+    <StoreProvider>
+      <IonApp>
+        <IonReactHashRouter>
           <IonRouterOutlet>
-            <Route path="/home" element={<Home />} />
+            <Route path="/today" element={<Today />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/notes" element={<Notes />} />
+            <Route path="/lists" element={<Lists />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route path="/" element={<Navigate to="/today" replace />} />
           </IonRouterOutlet>
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="home" href="/home">
-              <IonIcon icon={calendarOutline} />
-              <IonLabel>Home</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="settings" href="/settings">
-              <IonIcon icon={settingsOutline} />
-              <IonLabel>Settings</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
-        </IonTabs>
-      </IonReactHashRouter>
-    </IonApp>
+          <TabBar />
+        </IonReactHashRouter>
+      </IonApp>
+    </StoreProvider>
   )
 }

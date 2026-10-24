@@ -1,0 +1,14 @@
+.icon-button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 18px;
+  color: var(--text);
+}
+
+.icon-button:active {
+  box-shadow: var(--pressed);
+}

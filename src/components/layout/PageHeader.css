@@ -1,0 +1,27 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+}
+
+.page-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-title {
+  line-height: 1.1;
+}
+
+.page-title-large {
+  font-size: 36px;
+}
+
+.page-title-medium {
+  font-size: 30px;
+}
+
+.eyebrow + .page-title {
+  margin-top: 2px;
+}
