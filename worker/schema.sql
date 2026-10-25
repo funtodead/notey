@@ -16,3 +16,10 @@ CREATE TABLE IF NOT EXISTS reminders (
 );
 
 CREATE INDEX IF NOT EXISTS reminders_at ON reminders (at);
+
+-- Calendar events an iPhone Shortcut sends in (calendars that can't be shared by link).
+CREATE TABLE IF NOT EXISTS bridge (
+  id TEXT PRIMARY KEY,
+  events TEXT NOT NULL,
+  updated_at INTEGER NOT NULL
+);

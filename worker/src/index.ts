@@ -18,25 +18,82 @@ interface Reminder {
 }
 
 const MAX_REMINDERS = 500
-// Device ids are random UUIDs made by the phone; knowing one is what lets you change its reminders.
+const MAX_BRIDGE_BYTES = 300_000
+// Device and bridge ids are random UUIDs made by the phone; knowing one is what lets you use it.
 const DEVICE_PATH = /^\/devices\/([0-9a-f-]{36})(\/reminders|\/test)?$/
+const BRIDGE_PATH = /^\/bridge\/([0-9a-f-]{36})$/
+
+// Calendar links the feed fetcher will open; anything else is refused, so it can't be used as an open proxy.
+const FEED_HOSTS = [/\.icloud\.com$/, /^calendar\.google\.com$/, /^outlook\.(office365|office|live)\.com$/, /^(www|download)\.hebcal\.com$/]
 
 export default {
-  async fetch(request, env) {
-    const origin = request.headers.get('Origin') ?? ''
-    const allowed = origin === env.ALLOWED_ORIGIN || origin.startsWith('http://localhost:')
+  async fetch(request, env, ctx) {
+    // Browsers always send Origin; only Notey's may call. Without one it's e.g. the iPhone Shortcut.
+    const origin = request.headers.get('Origin')
+    const allowed = origin === env.ALLOWED_ORIGIN || !!origin?.startsWith('http://localhost:')
     const cors = {
-      'Access-Control-Allow-Origin': allowed ? origin : env.ALLOWED_ORIGIN,
-      'Access-Control-Allow-Methods': 'PUT, POST, DELETE',
+      'Access-Control-Allow-Origin': allowed && origin ? origin : env.ALLOWED_ORIGIN,
+      'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
       'Access-Control-Allow-Headers': 'Content-Type',
     }
     const reply = (status: number, body: unknown = null) =>
       new Response(body === null ? null : JSON.stringify(body), { status, headers: cors })
 
     if (request.method === 'OPTIONS') return reply(204)
-    if (!allowed) return reply(403)
+    if (origin && !allowed) return reply(403)
 
-    const match = new URL(request.url).pathname.match(DEVICE_PATH)
+    const url = new URL(request.url)
+
+    // Fetch a published calendar for the app (iCloud and others don't allow it from a web page).
+    if (url.pathname === '/feed' && request.method === 'GET') {
+      let feed: URL
+      try {
+        feed = new URL((url.searchParams.get('url') ?? '').replace(/^webcal:/, 'https:'))
+      } catch {
+        return reply(400)
+      }
+      if (feed.protocol !== 'https:' || !FEED_HOSTS.some((host) => host.test(feed.hostname))) return reply(403)
+
+      const cache = caches.default
+      const cacheKey = new Request(`https://cache.notey/feed?url=${encodeURIComponent(feed.href)}`)
+      let response = await cache.match(cacheKey)
+      if (!response) {
+        const upstream = await fetch(feed.href, { redirect: 'follow' })
+        if (!upstream.ok) return reply(502, { status: upstream.status })
+        response = new Response(await upstream.text(), {
+          headers: { 'Content-Type': 'text/calendar; charset=utf-8', 'Cache-Control': 'max-age=300' },
+        })
+        ctx.waitUntil(cache.put(cacheKey, response.clone()))
+      }
+      return new Response(response.body, { headers: { ...cors, 'Content-Type': 'text/calendar; charset=utf-8' } })
+    }
+
+    // Events from an iPhone Shortcut (PUT), read back by the app (GET).
+    const bridge = url.pathname.match(BRIDGE_PATH)
+    if (bridge) {
+      const [, bridgeId] = bridge
+      if (request.method === 'PUT') {
+        const text = await request.text()
+        if (text.length > MAX_BRIDGE_BYTES) return reply(413)
+        const { events } = JSON.parse(text) as { events: unknown }
+        if (!Array.isArray(events)) return reply(400)
+        await env.DB.prepare(
+          'INSERT INTO bridge (id, events, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT (id) DO UPDATE SET events = ?2, updated_at = ?3',
+        )
+          .bind(bridgeId, JSON.stringify(events), Date.now())
+          .run()
+        return reply(200, { saved: events.length })
+      }
+      if (request.method === 'GET') {
+        const row = await env.DB.prepare('SELECT events, updated_at FROM bridge WHERE id = ?1')
+          .bind(bridgeId)
+          .first<{ events: string; updated_at: number }>()
+        return reply(200, row ? { events: JSON.parse(row.events), updatedAt: row.updated_at } : { events: [], updatedAt: null })
+      }
+      return reply(405)
+    }
+
+    const match = url.pathname.match(DEVICE_PATH)
     if (!match) return reply(404)
     const [, deviceId, action] = match
 
