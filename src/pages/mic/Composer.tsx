@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { Icon } from '../../components/ui/Icon'
 import type { MicSession } from '../../hooks/useMicSession'
@@ -22,15 +22,7 @@ const HINTS = {
 /** The big mic orb, and a text box for typing instead. While typing, the orb steps aside. */
 export function Composer({ session, text, onTextChange, onSend }: ComposerProps) {
   const [typing, setTyping] = useState(false)
-  const textRef = useRef<HTMLTextAreaElement>(null)
   const { phase } = session
-
-  // Grow with the text (up to the CSS max-height, then scroll), and shrink back after sending.
-  useLayoutEffect(() => {
-    const el = textRef.current!
-    el.style.height = 'auto'
-    el.style.height = `${el.scrollHeight}px`
-  }, [text])
   const recording = phase === 'recording'
   const busy = phase === 'thinking'
 
@@ -75,18 +67,19 @@ export function Composer({ session, text, onTextChange, onSend }: ComposerProps)
         <label htmlFor="mic-text" className="visually-hidden">
           Message to Notey
         </label>
-        <textarea
-          ref={textRef}
-          id="mic-text"
-          className="clay-pressed"
-          placeholder="Type instead…"
-          rows={1}
-          value={text}
-          autoComplete="off"
-          onChange={(e) => onTextChange(e.target.value)}
-          onFocus={() => setTyping(true)}
-          onBlur={() => setTyping(false)}
-        />
+        {/* An invisible copy of the text sits in the same grid cell and sizes the box (see CSS). */}
+        <div className="composer-field clay-pressed" data-value={`${text} `}>
+          <textarea
+            id="mic-text"
+            placeholder="Type instead…"
+            rows={1}
+            value={text}
+            autoComplete="off"
+            onChange={(e) => onTextChange(e.target.value)}
+            onFocus={() => setTyping(true)}
+            onBlur={() => setTyping(false)}
+          />
+        </div>
         <button
           type="submit"
           className={`composer-send ${text.trim() ? 'composer-send-ready' : 'clay-sm'}`}

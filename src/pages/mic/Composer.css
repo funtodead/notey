@@ -85,24 +85,53 @@
   gap: 10px;
 }
 
-/* One line is 52px tall (24px line + 14px padding each side); grows to 5 lines, then scrolls. */
-.composer-input textarea {
+/*
+ * Auto-growing text box without measuring: the textarea and an invisible copy of its text
+ * (::after) share one grid cell, so the cell is as tall as the text. One line = 52px
+ * (24px line + 14px padding each side); it grows to 5 lines, then the textarea scrolls.
+ */
+.composer-field {
   flex: 1;
   min-width: 0;
-  box-sizing: border-box;
-  height: 52px;
+  display: grid;
   max-height: 148px;
+  border-radius: 26px;
+}
+
+.composer-field::after {
+  content: attr(data-value);
+  visibility: hidden;
+  white-space: pre-wrap;
+}
+
+.composer-field textarea,
+.composer-field::after {
+  grid-area: 1 / 1 / 2 / 2;
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 52px;
+  max-height: 148px;
+  margin: 0;
   padding: 14px 18px;
   border: 0;
-  border-radius: 26px;
-  color: var(--text);
   font: 700 16px/24px var(--font-body);
+  overflow-wrap: anywhere;
+}
+
+.composer-field textarea {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: var(--text);
   outline: none;
   resize: none;
   overflow-y: auto;
+  /* No inner shadow or rounding from iOS's default textarea styling. */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-.composer-input textarea:focus {
+.composer-field:focus-within {
   box-shadow: var(--pressed), var(--focus-ring);
 }
 
