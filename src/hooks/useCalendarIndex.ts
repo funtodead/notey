@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { addDays } from '../lib/dates'
+import { daysWithin } from '../lib/dates'
 import { occursOn } from '../lib/recurrence'
 import type { ColorKey } from '../types/models'
 import { useCalendars } from './useCalendars'
@@ -38,13 +38,12 @@ export function useCalendarIndex(from: string, to: string) {
     for (const item of items) {
       const color = byId.get(item.categoryId)?.color ?? 'lavender'
       if (item.endDate) {
-        for (let day = item.date; day <= item.endDate; day = addDays(day, 1)) {
+        for (const day of daysWithin(item.date, item.endDate, from, to)) {
           const info = at(day)
           info.span ??= { item: item as SpanItem, color }
         }
       } else if (item.repeat) {
-        const last = item.repeat.until && item.repeat.until < to ? item.repeat.until : to
-        for (let day = item.date > from ? item.date : from; day <= last; day = addDays(day, 1)) {
+        for (const day of daysWithin(item.date, item.repeat.until ?? to, from, to)) {
           if (occursOn(item, day)) addColor(day, color)
         }
       } else {
@@ -57,7 +56,7 @@ export function useCalendarIndex(from: string, to: string) {
     for (const event of events) {
       const color = feedColor.get(event.calendarId)
       if (!color) continue
-      for (let day = event.date; day <= (event.endDate ?? event.date); day = addDays(day, 1)) addColor(day, color)
+      for (const day of daysWithin(event.date, event.endDate ?? event.date, from, to)) addColor(day, color)
     }
     return index
   }, [items, byId, events, feeds, from, to])

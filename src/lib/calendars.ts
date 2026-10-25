@@ -42,9 +42,11 @@ function toEvent(
   id: string,
   title: string,
   start: Date,
-  end: Date,
+  rawEnd: Date,
   allDay: boolean,
 ): ExternalEvent {
+  // An unreadable or backwards end would make the event endless; treat it as ending when it starts.
+  const end = Number.isNaN(rawEnd.getTime()) || rawEnd < start ? start : rawEnd
   const date = toISODate(start)
   const lastDay = toISODate(new Date(end.getTime() - (allDay ? 1 : 0)))
   const event: ExternalEvent = { id, calendarId, title: title || 'Busy', date }
@@ -103,12 +105,23 @@ export function parseIcs(text: string, calendarId: string, now = new Date()): Ex
   return events
 }
 
-/** What an iPhone Shortcut sends: ISO 8601 dates as Shortcuts formats them. */
+/** What an iPhone Shortcut sends; dates are ISO 8601 or in the phone's own format. */
 interface ShortcutEvent {
   title?: string
   start: string
   end?: string
   allDay?: boolean | string
+}
+
+/**
+ * Shortcuts sends dates as ISO 8601 ("2026-10-26T10:00:00+02:00") when told to, otherwise in the
+ * phone's format, which is day-first here ("26/10/2026, 10:00"). Safari would read that as month/day.
+ */
+export function parseShortcutDate(text: string) {
+  const dayFirst = text.trim().match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{4})(?:[,\sat]+(\d{1,2}):(\d{2}))?/)
+  if (!dayFirst) return new Date(text)
+  const [, day, month, year, hours = '0', minutes = '0'] = dayFirst
+  return new Date(Number(year), Number(month) - 1, Number(day), Number(hours), Number(minutes))
 }
 
 async function get(path: string) {
@@ -127,9 +140,9 @@ export async function fetchFeed(feed: CalendarFeed): Promise<{ events: ExternalE
     return {
       updatedAt: updatedAt ?? undefined,
       events: events.flatMap((e, i) => {
-        const start = new Date(e.start)
+        const start = parseShortcutDate(e.start)
         if (Number.isNaN(start.getTime())) return []
-        const end = e.end ? new Date(e.end) : start
+        const end = e.end ? parseShortcutDate(e.end) : start
         // Shortcuts ends an all-day event at 23:59 of its last day rather than the next midnight.
         const allDay = e.allDay === true || e.allDay === 'true' || e.allDay === 'Yes'
         const exclusiveEnd = allDay ? new Date(end.getTime() + 60_000) : end

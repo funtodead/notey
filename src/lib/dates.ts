@@ -36,6 +36,20 @@ export function formatMediumDate(iso: string) {
   return parseISODate(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
+
+/**
+ * Every date from `first` to `last` that falls inside `from`–`to`. Stops on malformed dates and
+ * after a bounded number of days, so bad data can never loop forever.
+ */
+export function daysWithin(first: string, last: string, from: string, to: string) {
+  const days: string[] = []
+  if (!ISO_DATE.test(first) || !ISO_DATE.test(last)) return days
+  const end = last < to ? last : to
+  for (let day = first > from ? first : from; day <= end && days.length < 800; day = addDays(day, 1)) days.push(day)
+  return days
+}
+
 export function addDays(iso: string, days: number) {
   const date = parseISODate(iso)
   date.setDate(date.getDate() + days)
