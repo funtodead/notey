@@ -154,3 +154,25 @@
 .edit-filed-save:disabled {
   opacity: 0.5;
 }
+
+.edit-filed-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-filed-remind {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* The native time picker sits invisibly on top of its chip. */
+.edit-filed-chip input[type='time'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}

@@ -1,6 +1,8 @@
 import { IonModal } from '@ionic/react'
 import { useState, type ReactNode } from 'react'
 
+import { Icon } from '../ui/Icon'
+import { Switch } from '../ui/Switch'
 import { useStore } from '../../hooks/useStore'
 import { useTodayDate } from '../../hooks/useTodayDate'
 import { addDays, formatMediumDate } from '../../lib/dates'
@@ -104,6 +106,37 @@ export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps)
                   {draft.date !== today && draft.date !== tomorrow ? formatMediumDate(draft.date) : 'Pick date…'}
                   <input type="date" value={draft.date} onChange={(e) => e.target.value && set({ date: e.target.value })} />
                 </label>
+              </div>
+            </fieldset>
+          )}
+
+          {draft.dest === 'day' && (
+            <fieldset>
+              <legend>Time</legend>
+              <div className="edit-filed-time">
+                <label className={`edit-filed-chip ${draft.time ? 'edit-filed-chip-on' : ''}`}>
+                  {draft.time ?? 'Add time…'}
+                  <input
+                    type="time"
+                    value={draft.time ?? ''}
+                    onChange={(e) => set({ time: e.target.value || null })}
+                  />
+                </label>
+                {draft.time && (
+                  <button className="edit-filed-chip" onClick={() => set({ time: null, remind: false })}>
+                    No time
+                  </button>
+                )}
+                <span className="edit-filed-remind">
+                  <Icon name="bell" size={16} />
+                  Remind me
+                  <Switch
+                    label="Remind me"
+                    checked={draft.remind && !!draft.time}
+                    // A reminder needs a time; 09:00 unless one is set.
+                    onChange={(remind) => set({ remind, time: draft.time ?? (remind ? '09:00' : null) })}
+                  />
+                </span>
               </div>
             </fieldset>
           )}

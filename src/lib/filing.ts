@@ -120,6 +120,10 @@ export interface Draft {
   categoryId: string
   /** For a dated item; null = happens once. */
   repeat: Repeat | null
+  /** HH:mm, or null for no time. */
+  time: string | null
+  /** Notify at `time`. */
+  remind: boolean
 }
 
 export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft {
@@ -130,10 +134,20 @@ export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft
     listId: state.lists[0]?.id ?? '',
     categoryId: state.categories[0].id,
     repeat: null,
+    time: null,
+    remind: false,
   }
   const item = ref.kind === 'item' && state.items.find((i) => i.id === ref.id)
   if (item) {
-    return { ...base, title: item.title, date: item.date, categoryId: item.categoryId, repeat: item.repeat ?? null }
+    return {
+      ...base,
+      title: item.title,
+      date: item.date,
+      categoryId: item.categoryId,
+      repeat: item.repeat ?? null,
+      time: item.time ?? null,
+      remind: !!item.remind,
+    }
   }
   const note = ref.kind === 'note' && state.notes.find((n) => n.id === ref.id)
   if (note) return { ...base, title: note.text, dest: 'note', categoryId: note.categoryId }
@@ -170,6 +184,10 @@ export function refile(ref: EntityRef, draft: Draft, state: StoreData): { bundle
   if (item.endDate && item.endDate <= item.date) delete item.endDate
   if (draft.repeat && !item.endDate) item.repeat = draft.repeat
   else delete item.repeat
+  if (draft.time) item.time = draft.time
+  else delete item.time
+  if (draft.remind && item.time) item.remind = true
+  else delete item.remind
   return { bundle: { items: [item] }, ref: { kind: 'item', id } }
 }
 
