@@ -9,6 +9,7 @@ import Lists from './pages/lists/Lists'
 import Notes from './pages/notes/Notes'
 import Settings from './pages/settings/Settings'
 import Today from './pages/today/Today'
+import { NotificationSync } from './state/NotificationSync'
 import { SettingsProvider } from './state/SettingsProvider'
 import { StoreProvider } from './state/StoreProvider'
 import { ToastProvider } from './state/ToastProvider'
@@ -17,6 +18,7 @@ export default function App() {
   return (
     <StoreProvider>
       <SettingsProvider>
+        <NotificationSync />
         <IonApp>
           <ToastProvider>
             <IonReactHashRouter>

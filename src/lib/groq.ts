@@ -17,6 +17,8 @@ export interface FiledEntry {
   repeat: 'daily' | 'weekly' | 'monthly' | 'yearly' | null
   repeat_interval: number | null
   repeat_until: string | null
+  /** A notification at `time` ("remind me…"). */
+  remind: boolean | null
 }
 
 /** Something existing the user asked to delete; `date` deletes one day of a repeating item. */
@@ -42,6 +44,8 @@ export interface Update {
 export interface FilingContext {
   /** YYYY-MM-DD */
   today: string
+  /** HH:mm, for "in an hour" */
+  now: string
   categories: { id: string; name: string }[]
   lists: string[]
   /** One line per existing thing the user might refer to, each starting with its ref. */
@@ -105,6 +109,7 @@ export async function fileText(
             repeat: { type: ['string', 'null'], enum: ['daily', 'weekly', 'monthly', 'yearly', null] },
             repeat_interval: nullable('integer'),
             repeat_until: nullable('string'),
+            remind: nullable('boolean'),
           },
           required: [
             'type',
@@ -119,6 +124,7 @@ export async function fileText(
             'repeat',
             'repeat_interval',
             'repeat_until',
+            'remind',
           ],
           additionalProperties: false,
         },
@@ -172,9 +178,9 @@ export async function fileText(
   return JSON.parse(result.choices[0].message.content)
 }
 
-function filingPrompt({ today, categories, lists, existing }: FilingContext) {
+function filingPrompt({ today, now, categories, lists, existing }: FilingContext) {
   const weekday = new Date(`${today}T12:00:00`).toLocaleDateString('en-GB', { weekday: 'long' })
-  return `You file quick messages for Notey, a personal organizer. Today is ${weekday} ${today}.
+  return `You file quick messages for Notey, a personal organizer. Today is ${weekday} ${today}, and it's ${now}.
 
 Split the message into separate things, in the order mentioned, and file each as one entry:
 - "event" (shown on the calendar): something that happens on a day or at a time — appointment, meeting, class, birthday, trip. Multi-day things (a trip Thu–Sat) are one event with date and end_date.
@@ -203,6 +209,10 @@ Repeating:
 - Only tasks and events repeat. Set repeat (daily, weekly, monthly, yearly) and repeat_interval (1 = every, 2 = every other, 3 = every third…), with date = the first occurrence, today or later.
 - repeat_until is the last date when an end is given ("until December" → the last day of December), else null.
 - Things that happen once have repeat, repeat_interval and repeat_until null.
+
+Reminders:
+- "remind me…" / "don't let me forget…" → a task (or the event, if it's an appointment) with remind true and the time to remind at. "remind me at 5 to call mom" → task "Call mom" today at 17:00. "in an hour" → now plus an hour. No time given → 09:00 (today if that's still ahead, else tomorrow).
+- Everything else has remind null. Reminders can repeat ("remind me every Monday at 8 to take out the bins").
 
 Rules:
 - Dates are YYYY-MM-DD, resolved from today (e.g. "Tuesday" = the next Tuesday). Times are 24h HH:mm. Use null when not given.

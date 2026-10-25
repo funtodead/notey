@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 
-import { compareItems } from '../lib/items'
-import { occurrence, occursOn } from '../lib/recurrence'
+import { itemsOn } from '../lib/items'
 import type { Item } from '../types/models'
 import { useStore } from './useStore'
 
@@ -16,13 +15,7 @@ export function useDay(date: string) {
 
   return useMemo(
     () => ({
-      items: items
-        .flatMap((i) => {
-          if (i.endDate) return []
-          if (i.repeat) return occursOn(i, date) ? [occurrence(i, date)] : []
-          return i.date === date ? [i] : []
-        })
-        .sort(compareItems),
+      items: itemsOn(items, date),
       spans: items.filter((i): i is SpanItem => !!i.endDate && i.date <= date && date <= i.endDate),
     }),
     [items, date],

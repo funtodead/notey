@@ -55,6 +55,7 @@ export function useMicSession() {
       const existing = existingContext(latest.current.state, today)
       const { entries, deletions, updates } = await fileText(groqKey, text, {
         today,
+        now: new Date().toTimeString().slice(0, 5),
         categories: categories.map(({ id, name }) => ({ id, name })),
         lists: lists.map((l) => l.name),
         existing: existing.lines,

@@ -8,6 +8,7 @@ import { AppearanceRow } from './AppearanceRow'
 import { BackupRow } from './BackupRow'
 import { CategoriesEditor } from './CategoriesEditor'
 import { IntegrationsRow } from './IntegrationsRow'
+import { NotificationsRow } from './NotificationsRow'
 import './Settings.css'
 
 export default function Settings() {
@@ -20,6 +21,7 @@ export default function Settings() {
         <PageHeader size="medium" title="Settings" start={<IconButton icon="back" label="Back to Today" onClick={back} />} />
         <ApiKeyRow />
         <AppearanceRow />
+        <NotificationsRow />
         <IntegrationsRow />
         <CategoriesEditor />
         <BackupRow />

@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "notey-push",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  // Every minute: send the notifications that are due.
+  "triggers": { "crons": ["* * * * *"] },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "notey-push", "database_id": "728fce65-81f3-4a83-b4a8-c18a36a92efa" }
+  ],
+  // Public values only; VAPID_PRIVATE_KEY is a secret (wrangler secret put).
+  "vars": {
+    "VAPID_PUBLIC_KEY": "BIhyhZrz7Q8XwmHZ7LN0xHgS_Kd0WkbK5TzMDGMF0wzRjftCHf5i96QqB08zN4u-VjBhiaObRVG9pkptW4y2Bms",
+    "VAPID_SUBJECT": "https://funtodead.github.io/notey/",
+    "ALLOWED_ORIGIN": "https://funtodead.github.io"
+  }
+}

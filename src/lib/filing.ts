@@ -48,6 +48,7 @@ export function toBundle(entries: FiledEntry[], state: StoreData, today: string)
       const item: Item = { id, kind: entry.type, title: entry.title, categoryId, date, done: false, createdAt }
       if (isDate(entry.end_date) && entry.end_date > date) item.endDate = entry.end_date
       if (isTime(entry.time)) item.time = entry.time
+      if (entry.remind && item.time) item.remind = true
       if (entry.repeat && !item.endDate) {
         item.repeat = { freq: entry.repeat, interval: Math.max(1, entry.repeat_interval ?? 1) }
         if (isDate(entry.repeat_until) && entry.repeat_until >= date) item.repeat.until = entry.repeat_until
@@ -63,7 +64,7 @@ export interface FiledSummary {
   title: string
   /** "Today · Personal", "Tue 27 Oct, 15:00 · Work", "Lists › Shopping" */
   where: string
-  icon: 'today' | 'calendar' | 'repeat' | 'notes' | 'lists'
+  icon: 'today' | 'calendar' | 'repeat' | 'bell' | 'notes' | 'lists'
   color: ColorKey
 }
 
@@ -85,7 +86,7 @@ export function describeRef(ref: EntityRef, state: StoreData, today: string): Fi
     return {
       title: item.title,
       where: `${day}${item.time ? `, ${item.time}` : ''} · ${cat?.name ?? ''}`,
-      icon: item.repeat ? 'repeat' : item.date === today && !item.endDate ? 'today' : 'calendar',
+      icon: item.remind ? 'bell' : item.repeat ? 'repeat' : item.date === today && !item.endDate ? 'today' : 'calendar',
       color: cat?.color ?? 'lavender',
     }
   }

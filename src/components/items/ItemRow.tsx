@@ -36,10 +36,17 @@ export function ItemRow({ item, category, onToggle, onDelete, onOpen }: ItemRowP
         )}
         <span className="item-text">
           <span className="item-title">{item.title}</span>
-          {item.repeat && (
+          {/* A task's time (the checkbox takes the time pill's place), reminder bell and repeat rule. */}
+          {((item.kind === 'task' && item.time) || item.remind || item.repeat) && (
             <span className="item-repeat">
-              <Icon name="repeat" size={12} strokeWidth={2.4} />
-              {repeatLabel(item)}
+              {item.remind && <Icon name="bell" size={12} strokeWidth={2.4} />}
+              {item.kind === 'task' && item.time}
+              {item.repeat && (
+                <>
+                  <Icon name="repeat" size={12} strokeWidth={2.4} />
+                  {repeatLabel(item)}
+                </>
+              )}
             </span>
           )}
         </span>

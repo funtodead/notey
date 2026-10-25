@@ -26,6 +26,8 @@ export interface Item {
   doneDates?: string[]
   /** Occurrences deleted on their own ("only this one"). */
   skipDates?: string[]
+  /** Send a notification at `time` ("remind me at 5 to…"). */
+  remind?: boolean
 }
 
 export interface Repeat {
@@ -84,8 +86,19 @@ export interface EntityRef {
 
 export type Appearance = 'dark' | 'light' | 'system'
 
+/** Present once notifications are turned on. */
+export interface NotifySettings {
+  /** Random id this phone is known by on the push Worker. */
+  deviceId: string
+  /** A nudge 15 minutes before events with a time. */
+  beforeEvents: boolean
+  /** HH:mm for the morning summary, or null for none. */
+  morning: string | null
+}
+
 export interface Settings {
   groqKey: string
+  notify?: NotifySettings
   /** Dark when not set. */
   appearance?: Appearance
   /** ISO timestamp of the last backup export. */

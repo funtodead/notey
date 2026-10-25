@@ -9,6 +9,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      // Our own service worker (src/sw.ts), so it can show push notifications.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       pwaAssets: { config: true },
       manifest: {
         name: 'Notey',
@@ -20,7 +24,7 @@ export default defineConfig({
         theme_color: '#141319',
         background_color: '#141319',
       },
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}', 'assets/*-latin-*.woff2'],
       },
     }),
