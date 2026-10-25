@@ -1,0 +1,13 @@
+.calendar-section {
+  flex: none;
+  padding: 10px 10px 10px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.calendar-section h2 {
+  padding: 2px 8px 2px;
+  font-size: 18px;
+}

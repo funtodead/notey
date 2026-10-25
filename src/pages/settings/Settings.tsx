@@ -7,7 +7,7 @@ import { ApiKeyRow } from './ApiKeyRow'
 import { AppearanceRow } from './AppearanceRow'
 import { BackupRow } from './BackupRow'
 import { CategoriesEditor } from './CategoriesEditor'
-import { IntegrationsRow } from './IntegrationsRow'
+import { CalendarsRow } from './CalendarsRow'
 import { NotificationsRow } from './NotificationsRow'
 import './Settings.css'
 
@@ -22,7 +22,7 @@ export default function Settings() {
         <ApiKeyRow />
         <AppearanceRow />
         <NotificationsRow />
-        <IntegrationsRow />
+        <CalendarsRow />
         <CategoriesEditor />
         <BackupRow />
       </div>

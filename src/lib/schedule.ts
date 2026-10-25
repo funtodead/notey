@@ -1,4 +1,5 @@
-import type { NotifySettings, StoreData } from '../types/models'
+import type { ExternalEvent, NotifySettings, StoreData } from '../types/models'
+import { eventsOn } from './calendars'
 import { addDays, parseISODate, toISODate } from './dates'
 import { itemsOn } from './items'
 import type { ScheduledNotification } from './push'
@@ -15,8 +16,16 @@ const at = (date: string, time: string) => {
   return d.getTime()
 }
 
-/** Every notification due in the next two weeks: reminders, event nudges and morning summaries. */
-export function buildSchedule(state: StoreData, notify: NotifySettings, now: Date): ScheduledNotification[] {
+/**
+ * Every notification due in the next two weeks: reminders, event nudges and morning summaries.
+ * Events from linked calendars only appear in the summary; their own calendar app already alerts for them.
+ */
+export function buildSchedule(
+  state: StoreData,
+  notify: NotifySettings,
+  now: Date,
+  external: ExternalEvent[] = [],
+): ScheduledNotification[] {
   const out: ScheduledNotification[] = []
   const today = toISODate(now)
 
@@ -38,8 +47,11 @@ export function buildSchedule(state: StoreData, notify: NotifySettings, now: Dat
       }
     }
 
-    if (notify.morning && items.length > 0) {
-      const events = items.filter((i) => i.kind === 'event').map((i) => (i.time ? `${i.time} ${i.title}` : i.title))
+    const linked = eventsOn(external, date)
+    if (notify.morning && items.length + linked.length > 0) {
+      const events = [...items.filter((i) => i.kind === 'event'), ...linked]
+        .sort((a, b) => (a.time ?? '').localeCompare(b.time ?? ''))
+        .map((e) => (e.time ? `${e.time} ${e.title}` : e.title))
       const tasks = items.filter((i) => i.kind === 'task').length
       const parts = [...events, ...(tasks ? [`${tasks} ${tasks === 1 ? 'task' : 'tasks'}`] : [])]
       out.push({ id: `m:${date}`, at: at(date, notify.morning), title: 'Today', body: parts.join(' · ') })

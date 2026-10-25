@@ -96,9 +96,37 @@ export interface NotifySettings {
   morning: string | null
 }
 
+/** A calendar from outside Notey, shown read-only. */
+export interface CalendarFeed {
+  id: string
+  name: string
+  color: ColorKey
+  source:
+    | { type: 'link'; url: string }
+    /** Israeli holidays from Hebcal. */
+    | { type: 'holidays' }
+    /** Events an iPhone Shortcut posts to the Worker, for calendars that can't be shared by link. */
+    | { type: 'shortcut'; bridgeId: string }
+}
+
+/** One event from a calendar feed, already expanded for repeats and converted to local time. */
+export interface ExternalEvent {
+  id: string
+  calendarId: string
+  title: string
+  /** YYYY-MM-DD */
+  date: string
+  /** YYYY-MM-DD, when it spans several days */
+  endDate?: string
+  /** HH:mm; none for all-day */
+  time?: string
+  endTime?: string
+}
+
 export interface Settings {
   groqKey: string
   notify?: NotifySettings
+  calendars?: CalendarFeed[]
   /** Dark when not set. */
   appearance?: Appearance
   /** ISO timestamp of the last backup export. */

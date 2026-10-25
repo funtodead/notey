@@ -9,6 +9,7 @@ import Lists from './pages/lists/Lists'
 import Notes from './pages/notes/Notes'
 import Settings from './pages/settings/Settings'
 import Today from './pages/today/Today'
+import { CalendarsProvider } from './state/CalendarsProvider'
 import { NotificationSync } from './state/NotificationSync'
 import { SettingsProvider } from './state/SettingsProvider'
 import { StoreProvider } from './state/StoreProvider'
@@ -18,23 +19,25 @@ export default function App() {
   return (
     <StoreProvider>
       <SettingsProvider>
-        <NotificationSync />
-        <IonApp>
-          <ToastProvider>
-            <IonReactHashRouter>
-              <IonRouterOutlet>
-                <Route path="/today" element={<Today />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/notes" element={<Notes />} />
-                <Route path="/lists" element={<Lists />} />
-                <Route path="/lists/:id" element={<ListDetail />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/" element={<Navigate to="/today" replace />} />
-              </IonRouterOutlet>
-              <TabBar />
-            </IonReactHashRouter>
-          </ToastProvider>
-        </IonApp>
+        <CalendarsProvider>
+          <NotificationSync />
+          <IonApp>
+            <ToastProvider>
+              <IonReactHashRouter>
+                <IonRouterOutlet>
+                  <Route path="/today" element={<Today />} />
+                  <Route path="/calendar" element={<Calendar />} />
+                  <Route path="/notes" element={<Notes />} />
+                  <Route path="/lists" element={<Lists />} />
+                  <Route path="/lists/:id" element={<ListDetail />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/" element={<Navigate to="/today" replace />} />
+                </IonRouterOutlet>
+                <TabBar />
+              </IonReactHashRouter>
+            </ToastProvider>
+          </IonApp>
+        </CalendarsProvider>
       </SettingsProvider>
     </StoreProvider>
   )

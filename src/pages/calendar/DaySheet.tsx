@@ -2,6 +2,8 @@ import { createGesture } from '@ionic/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { EditFiled } from '../../components/items/EditFiled'
+import { ExternalEventRow } from '../../components/items/ExternalEventRow'
+import { useExternalDay } from '../../hooks/useCalendars'
 import { ItemRow } from '../../components/items/ItemRow'
 import { Icon } from '../../components/ui/Icon'
 import { useCategories } from '../../hooks/useCategories'
@@ -45,7 +47,8 @@ export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
 
   const events = items.filter((i) => i.kind === 'event')
   const tasks = items.filter((i) => i.kind === 'task')
-  const total = items.length + spans.length
+  const external = useExternalDay(date)
+  const total = items.length + spans.length + external.length
 
   const row = (item: Item) => (
     <ItemRow
@@ -90,6 +93,10 @@ export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
                 day {daysBetween(span.date, date) + 1} of {daysBetween(span.date, span.endDate) + 1}
               </span>
             </div>
+          ))}
+          {external.length > 0 && <h3>From your calendars</h3>}
+          {external.map(({ event, feed }) => (
+            <ExternalEventRow key={event.id} event={event} feed={feed} />
           ))}
           {events.length > 0 && <h3>Schedule</h3>}
           {events.map(row)}

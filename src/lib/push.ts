@@ -1,6 +1,6 @@
 /** Talks to Notey's push Worker (see worker/), which sends notifications at the right time. */
 
-const PUSH_API = 'https://notey-push.notey-push.workers.dev'
+export const PUSH_API = 'https://notey-push.notey-push.workers.dev'
 // Public half of the Worker's VAPID key pair; the private half is a Cloudflare secret.
 const VAPID_PUBLIC_KEY = 'BIhyhZrz7Q8XwmHZ7LN0xHgS_Kd0WkbK5TzMDGMF0wzRjftCHf5i96QqB08zN4u-VjBhiaObRVG9pkptW4y2Bms'
 

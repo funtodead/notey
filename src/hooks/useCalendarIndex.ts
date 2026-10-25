@@ -3,7 +3,9 @@ import { useMemo } from 'react'
 import { addDays } from '../lib/dates'
 import { occursOn } from '../lib/recurrence'
 import type { ColorKey } from '../types/models'
+import { useCalendars } from './useCalendars'
 import { useCategories } from './useCategories'
+import { useSettings } from './useSettings'
 import type { SpanItem } from './useDay'
 import { useStore } from './useStore'
 
@@ -18,6 +20,8 @@ export interface DayInfo {
 export function useCalendarIndex(from: string, to: string) {
   const { items } = useStore().state
   const { byId } = useCategories()
+  const { events } = useCalendars()
+  const feeds = useSettings().settings.calendars
 
   return useMemo(() => {
     const index = new Map<string, DayInfo>()
@@ -47,6 +51,14 @@ export function useCalendarIndex(from: string, to: string) {
         addColor(item.date, color)
       }
     }
+
+    // Linked calendars get a dot in their own color on each day they cover.
+    const feedColor = new Map((feeds ?? []).map((f) => [f.id, f.color]))
+    for (const event of events) {
+      const color = feedColor.get(event.calendarId)
+      if (!color) continue
+      for (let day = event.date; day <= (event.endDate ?? event.date); day = addDays(day, 1)) addColor(day, color)
+    }
     return index
-  }, [items, byId, from, to])
+  }, [items, byId, events, feeds, from, to])
 }
