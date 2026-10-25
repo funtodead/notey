@@ -75,7 +75,9 @@ export default {
       if (request.method === 'PUT') {
         const text = await request.text()
         if (text.length > MAX_BRIDGE_BYTES) return reply(413)
-        const { events } = JSON.parse(text) as { events: unknown }
+        // Shortcuts may send the list itself or wrapped as { events: [...] }.
+        const body = JSON.parse(text) as unknown
+        const events = Array.isArray(body) ? body : (body as { events?: unknown })?.events
         if (!Array.isArray(events)) return reply(400)
         await env.DB.prepare(
           'INSERT INTO bridge (id, events, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT (id) DO UPDATE SET events = ?2, updated_at = ?3',
