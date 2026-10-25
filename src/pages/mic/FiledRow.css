@@ -82,3 +82,15 @@
 .filed-row-removed .filed-row-title {
   text-decoration: line-through;
 }
+
+.filed-row-badge {
+  flex: none;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: var(--pill-bg);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+}

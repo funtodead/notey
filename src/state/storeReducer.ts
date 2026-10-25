@@ -22,6 +22,8 @@ export type StoreAction =
   | { type: 'listItems/update'; id: string; changes: Partial<ListItem> }
   | { type: 'entities/add'; bundle: Bundle }
   | { type: 'entities/remove'; refs: EntityRef[] }
+  /** Swaps stored records for these (matched by id), in place. */
+  | { type: 'entities/replace'; bundle: Bundle }
   | { type: 'categories/add'; category: Category }
   | { type: 'categories/update'; id: string; changes: Partial<Category> }
   | { type: 'categories/remove'; id: string }
@@ -55,6 +57,20 @@ export function storeReducer(state: StoreData, action: StoreAction): StoreData {
         notes: [...state.notes, ...notes],
         lists: [...state.lists, ...lists],
         listItems: [...state.listItems, ...listItems],
+      }
+    }
+    case 'entities/replace': {
+      const swap = <T extends { id: string }>(records: T[], next: T[] = []) => {
+        const byId = new Map(next.map((r) => [r.id, r]))
+        return records.map((r) => byId.get(r.id) ?? r)
+      }
+      const { items, notes, lists, listItems } = action.bundle
+      return {
+        ...state,
+        items: swap(state.items, items),
+        notes: swap(state.notes, notes),
+        lists: swap(state.lists, lists),
+        listItems: swap(state.listItems, listItems),
       }
     }
     case 'entities/remove': {

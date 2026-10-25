@@ -1,4 +1,4 @@
-import type { Removal } from '../lib/deleting'
+import type { ChangePlan } from '../lib/changes'
 import type { FiledSummary } from '../lib/filing'
 import type { EntityRef } from './models'
 
@@ -9,10 +9,12 @@ export type MicMessage =
       role: 'ai'
       /** What was filed. */
       refs: EntityRef[]
+      /** What was edited. */
+      changed: EntityRef[]
       /** What was deleted, as it looked before. */
       removed: FiledSummary[]
-      /** How to bring the deleted things back on Undo all. */
-      restore: Removal['restore']
+      /** How to put edited and deleted things back on Undo all. */
+      restore: ChangePlan['restore']
       createdAt: string
     }
 

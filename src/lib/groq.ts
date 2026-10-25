@@ -25,6 +25,20 @@ export interface Deletion {
   date: string | null
 }
 
+/** A change to something existing; null fields stay as they are. */
+export interface Update {
+  ref: string
+  /** For a repeating item: the one day `done` applies to. */
+  occurrence: string | null
+  title: string | null
+  date: string | null
+  time: string | null
+  category: string | null
+  done: boolean | null
+  /** A note's details or a list item's quantity. */
+  details: string | null
+}
+
 export interface FilingContext {
   /** YYYY-MM-DD */
   today: string
@@ -69,7 +83,7 @@ export async function fileText(
   apiKey: string,
   text: string,
   context: FilingContext,
-): Promise<{ entries: FiledEntry[]; deletions: Deletion[] }> {
+): Promise<{ entries: FiledEntry[]; deletions: Deletion[]; updates: Update[] }> {
   const nullable = (type: string) => ({ type: [type, 'null'] })
   const schema = {
     type: 'object',
@@ -118,8 +132,26 @@ export async function fileText(
           additionalProperties: false,
         },
       },
+      updates: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            ref: { type: 'string' },
+            occurrence: nullable('string'),
+            title: nullable('string'),
+            date: nullable('string'),
+            time: nullable('string'),
+            category: { type: ['string', 'null'], enum: [...context.categories.map((c) => c.id), null] },
+            done: nullable('boolean'),
+            details: nullable('string'),
+          },
+          required: ['ref', 'occurrence', 'title', 'date', 'time', 'category', 'done', 'details'],
+          additionalProperties: false,
+        },
+      },
     },
-    required: ['entries', 'deletions'],
+    required: ['entries', 'deletions', 'updates'],
     additionalProperties: false,
   }
 
@@ -184,7 +216,12 @@ Deleting:
 - When the user asks to delete, remove, cancel, cross off or forget something that already exists, put it in "deletions" with its ref from the list below, and don't create an entry for it.
 - For one day of a repeating item ("skip gym next Monday", "no yoga today"), give that day's date; to delete the whole thing, date is null.
 - Deleting a list deletes everything on it. Only use refs from the list; if nothing matches, delete nothing.
-- "move the dentist to Friday" = delete the old one and create the new one.
+
+Changing:
+- When the user asks to change something that already exists — mark it done or not done, rename it, move it to another day or time, change its category, change a note's details or a list item's quantity — put it in "updates" with its ref and only the fields that change; every other field is null. Don't also create or delete it.
+- For one day of a repeating item ("gym is done for today"), set occurrence to that day and done. A new date or time on a repeating item moves the whole series.
+- Renaming a list: give the list's ref and the new name as title.
+- Examples: "mark gym as done" → done true; "move the dentist to Friday at 4" → date = Friday, time 16:00; "the plumber note goes under Home" → category home; "make it 2 liters of milk" → details "2 L".
 
 Existing things:
 ${existing.length ? existing.join('\n') : 'none'}`

@@ -34,6 +34,7 @@ export function MessageList({ session, onEdit, onDone }: MessageListProps) {
         <FiledResult
           key={message.id}
           refs={message.refs}
+          changed={message.changed}
           removed={message.removed}
           onEdit={(ref) => onEdit(message.id, ref)}
           onUndoAll={() => session.undoAll(message.id)}
@@ -44,8 +45,13 @@ export function MessageList({ session, onEdit, onDone }: MessageListProps) {
 
     return (
       <div key={message.id} className="mic-card mic-history">
-        {message.refs.map((ref) => (
-          <FiledRow key={ref.id} entity={ref} compact onClick={() => onEdit(message.id, ref)} />
+        {[...message.refs.filter((r) => r.kind !== 'list'), ...message.changed].map((ref) => (
+          <FiledRow
+            key={ref.id}
+            entity={ref}
+            compact
+            onClick={ref.kind === 'list' ? undefined : () => onEdit(message.id, ref)}
+          />
         ))}
         {message.removed.map((summary, i) => (
           <RemovedRow key={i} summary={summary} compact />

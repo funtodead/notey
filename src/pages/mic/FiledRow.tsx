@@ -9,22 +9,22 @@ interface FiledRowProps {
   entity: EntityRef
   /** Single-line row used in the history; the full row shows a pencil to fix it. */
   compact?: boolean
-  onClick: () => void
+  /** e.g. "Changed", for something edited rather than filed. */
+  badge?: string
+  /** Opens the fix sheet; without it the row is just shown. */
+  onClick?: () => void
 }
 
 /** One filed thing and where it went, e.g. "Milk — Lists › Shopping". Tap to fix. */
-export function FiledRow({ entity, compact, onClick }: FiledRowProps) {
+export function FiledRow({ entity, compact, badge, onClick }: FiledRowProps) {
   const { state } = useStore()
   const today = useTodayDate()
   const summary = describeRef(entity, state, today)
   if (!summary) return null
 
-  return (
-    <button
-      className={`filed-row tone-${summary.color} ${compact ? 'filed-row-compact' : ''}`}
-      aria-label={`Edit ${summary.title}, filed to ${summary.where}`}
-      onClick={onClick}
-    >
+  const className = `filed-row tone-${summary.color} ${compact ? 'filed-row-compact' : ''}`
+  const content = (
+    <>
       <span className="filed-row-icon" aria-hidden="true">
         <Icon name={summary.icon} size={compact ? 16 : 20} strokeWidth={compact ? 2.4 : 2.2} />
       </span>
@@ -39,9 +39,21 @@ export function FiledRow({ entity, compact, onClick }: FiledRowProps) {
             <span className="filed-row-title">{summary.title}</span>
             <span className="filed-row-where">{summary.where}</span>
           </span>
-          <Icon name="pencil" size={18} />
+          {badge && <span className="filed-row-badge">{badge}</span>}
+          {onClick && <Icon name="pencil" size={18} />}
         </>
       )}
+    </>
+  )
+
+  if (!onClick) return <div className={className}>{content}</div>
+  return (
+    <button
+      className={className}
+      aria-label={`Edit ${summary.title}, ${badge ? `${badge.toLowerCase()}, now` : 'filed to'} ${summary.where}`}
+      onClick={onClick}
+    >
+      {content}
     </button>
   )
 }

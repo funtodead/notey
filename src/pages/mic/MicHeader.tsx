@@ -18,7 +18,8 @@ function status({ phase, error, messages }: MicSession): { label: string; tone: 
   if (phase === 'error' && error) return { label: ERROR_STATUS[error], tone: 'err' }
   const last = messages.at(-1)
   if (phase === 'filed' && last?.role === 'ai') {
-    return { label: resultLabel(last.refs.filter((r) => r.kind !== 'list').length, last.removed.length), tone: 'ok' }
+    const filed = last.refs.filter((r) => r.kind !== 'list').length
+    return { label: resultLabel(filed, last.changed.length, last.removed.length), tone: 'ok' }
   }
   return { label: 'Ready', tone: 'ok' }
 }

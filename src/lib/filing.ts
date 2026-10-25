@@ -95,6 +95,12 @@ export function describeRef(ref: EntityRef, state: StoreData, today: string): Fi
     const cat = category(note.categoryId)
     return { title: note.text, where: `Notes · ${cat?.name ?? ''}`, icon: 'notes', color: cat?.color ?? 'lavender' }
   }
+  if (ref.kind === 'list') {
+    const list = state.lists.find((l) => l.id === ref.id)
+    if (!list) return null
+    const count = state.listItems.filter((li) => li.listId === list.id).length
+    return { title: list.name, where: `List · ${count} ${count === 1 ? 'item' : 'items'}`, icon: 'lists', color: list.color }
+  }
   if (ref.kind === 'listItem') {
     const listItem = state.listItems.find((li) => li.id === ref.id)
     const list = listItem && state.lists.find((l) => l.id === listItem.listId)
