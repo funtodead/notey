@@ -131,4 +131,6 @@ export interface Settings {
   appearance?: Appearance
   /** ISO timestamp of the last backup export. */
   lastBackupAt?: string
+  /** ISO timestamp until which the "back up" banner on Today stays hidden ("Later"). */
+  backupSnoozedUntil?: string
 }

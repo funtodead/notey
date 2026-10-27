@@ -13,6 +13,7 @@ import { useOverdue } from '../../hooks/useOverdue'
 import { useTodayDate } from '../../hooks/useTodayDate'
 import { formatLongDate } from '../../lib/dates'
 import type { Item } from '../../types/models'
+import { BackupBanner } from './BackupBanner'
 import { CalendarSection } from './CalendarSection'
 import { CategorySection } from './CategorySection'
 import { OverdueSection } from './OverdueSection'
@@ -45,6 +46,8 @@ export default function Today() {
           </>
         }
       />
+
+      <BackupBanner />
 
       {spans.map((span) => {
         const category = byId.get(span.categoryId)

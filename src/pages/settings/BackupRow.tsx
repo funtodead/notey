@@ -2,35 +2,27 @@ import { useIonAlert } from '@ionic/react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Icon } from '../../components/ui/Icon'
+import { useBackupExport } from '../../hooks/useBackupExport'
 import { useSettings } from '../../hooks/useSettings'
 import { useStore } from '../../hooks/useStore'
 import { useToast } from '../../hooks/useToast'
-import { createBackup, readBackup, shareFile } from '../../lib/backup'
+import { readBackup } from '../../lib/backup'
 import { formatAgo } from '../../lib/dates'
 import './BackupRow.css'
 
 /** Export everything to a file (to keep in iCloud Drive), or restore from one. */
 export function BackupRow() {
-  const { state, dispatch } = useStore()
+  const { dispatch } = useStore()
   const { settings, update } = useSettings()
   const showToast = useToast()
   const [presentAlert] = useIonAlert()
   const fileInput = useRef<HTMLInputElement>(null)
   const [persisted, setPersisted] = useState(false)
+  const exportBackup = useBackupExport()
 
   useEffect(() => {
     void navigator.storage?.persisted().then(setPersisted)
   }, [])
-
-  const exportBackup = async () => {
-    try {
-      await shareFile(createBackup(state, settings))
-      update({ lastBackupAt: new Date().toISOString() })
-    } catch (e) {
-      // Closing the share sheet without saving isn't an error.
-      if (!(e instanceof DOMException && e.name === 'AbortError')) throw e
-    }
-  }
 
   const importBackup = async (file: File) => {
     const backup = await readBackup(file)
