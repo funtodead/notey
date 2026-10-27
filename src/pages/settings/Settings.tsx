@@ -18,7 +18,12 @@ export default function Settings() {
   return (
     <Page>
       <div className="settings">
-        <PageHeader size="medium" title="Settings" start={<IconButton icon="back" label="Back to Today" onClick={back} />} />
+        <PageHeader
+          size="medium"
+          title="Settings"
+          start={<IconButton icon="back" label="Back to Today" onClick={back} />}
+          end={<IconButton icon="chart" label="Stats" onClick={() => router.push('/stats')} />}
+        />
         <ApiKeyRow />
         <AppearanceRow />
         <NotificationsRow />

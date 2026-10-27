@@ -1,0 +1,216 @@
+/* No tab bar on Stats, so less room is needed at the bottom. */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: calc(40px - var(--tabbar-space));
+}
+
+.stats-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stats-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 12px;
+  border-radius: 20px;
+}
+
+.stats-tile-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.stats-tile-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 24px;
+}
+
+.stats-heading {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.stats-readout {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.stats-readout strong {
+  color: var(--text);
+}
+
+.stats-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  height: 150px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* The whole column is the tap target, not just the bar. */
+.stats-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding-top: 4px;
+}
+
+.stats-bar-track {
+  position: relative;
+  flex: 1;
+  width: 60%;
+  max-width: 28px;
+}
+
+.stats-bar-planned,
+.stats-bar-done {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 4px 4px 0 0;
+}
+
+.stats-bar-planned {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.stats-bar-done {
+  background: var(--accent);
+  opacity: 0.75;
+}
+
+.stats-bar-picked .stats-bar-done {
+  opacity: 1;
+}
+
+.stats-bar-day {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  padding-bottom: 6px;
+}
+
+.stats-bar-picked .stats-bar-day {
+  color: var(--text);
+}
+
+.stats-key {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.stats-key span {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.stats-key-done {
+  background: var(--accent);
+}
+
+.stats-key-planned {
+  margin-left: 8px;
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.stats-category {
+  display: grid;
+  grid-template-columns: 88px 1fr 28px;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.stats-category-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-category-track {
+  height: 12px;
+}
+
+.stats-category-track span {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--dot);
+}
+
+.stats-category-value {
+  text-align: right;
+  color: var(--muted);
+}
+
+.stats-habit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--line);
+}
+
+.stats-habit:last-child {
+  border-bottom: 0;
+}
+
+.stats-habit-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stats-habit-text span:first-child {
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-habit-text span:last-child {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.stats-habit-streak {
+  flex: none;
+  font-size: 13px;
+  font-weight: 800;
+}

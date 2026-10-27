@@ -25,8 +25,8 @@ export function TabBar() {
   const router = useIonRouter()
   const { pathname } = useLocation()
 
-  // Hidden rather than removed on Settings: the mic button keeps the conversation alive.
-  const hidden = pathname === '/settings'
+  // Hidden rather than removed on Settings and Stats: the mic button keeps the conversation alive.
+  const hidden = pathname === '/settings' || pathname === '/stats'
 
   const renderTab = (tab: Tab) => {
     const active = pathname.startsWith(tab.path)

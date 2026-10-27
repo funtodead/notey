@@ -8,6 +8,7 @@ import ListDetail from './pages/lists/ListDetail'
 import Lists from './pages/lists/Lists'
 import Notes from './pages/notes/Notes'
 import Settings from './pages/settings/Settings'
+import Stats from './pages/stats/Stats'
 import Today from './pages/today/Today'
 import { CalendarsProvider } from './state/CalendarsProvider'
 import { NotificationSync } from './state/NotificationSync'
@@ -31,6 +32,7 @@ export default function App() {
                   <Route path="/lists" element={<Lists />} />
                   <Route path="/lists/:id" element={<ListDetail />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/stats" element={<Stats />} />
                   <Route path="/" element={<Navigate to="/today" replace />} />
                 </IonRouterOutlet>
                 <TabBar />
