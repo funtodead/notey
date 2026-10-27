@@ -5,10 +5,13 @@ import { Switch } from '../../components/ui/Switch'
 import { useSettings } from '../../hooks/useSettings'
 import { useToast } from '../../hooks/useToast'
 import { pushSupported, sendTest, subscribe, unsubscribe } from '../../lib/push'
+import { DEFAULT_LEAD_MIN } from '../../lib/schedule'
 import type { NotifySettings } from '../../types/models'
 import './NotificationsRow.css'
 
 const DEFAULT_MORNING = '08:00'
+const DEFAULT_EVENING = '21:00'
+const LEADS = [5, 10, 15, 30, 60]
 
 export function NotificationsRow() {
   const { settings, update } = useSettings()
@@ -34,7 +37,7 @@ export function NotificationsRow() {
         showToast({ message: 'Notifications are off for Notey in iPhone Settings', icon: 'alert' })
         return
       }
-      update({ notify: { deviceId, beforeEvents: true, morning: DEFAULT_MORNING } })
+      update({ notify: { deviceId, beforeEvents: true, meetings: true, morning: DEFAULT_MORNING, evening: DEFAULT_EVENING } })
       showToast({ message: 'Notifications are on', icon: 'check' })
     })
 
@@ -64,7 +67,7 @@ export function NotificationsRow() {
             <div className="notifications-row">
               <span>
                 <span>Before events</span>
-                <span>15 minutes before anything with a time</span>
+                <span>A nudge before anything with a time</span>
               </span>
               <Switch
                 label="Notify before events"
@@ -72,6 +75,37 @@ export function NotificationsRow() {
                 onChange={(beforeEvents) => change({ beforeEvents })}
               />
             </div>
+            <div className="notifications-row">
+              <span>
+                <span>Meetings from calendars</span>
+                <span>Same nudge for linked calendars, like work</span>
+              </span>
+              <Switch
+                label="Notify before linked calendar meetings"
+                checked={!!notify.meetings}
+                onChange={(meetings) => change({ meetings })}
+              />
+            </div>
+            {(notify.beforeEvents || notify.meetings) && (
+              <div className="notifications-row">
+                <span>
+                  <span>How early</span>
+                  <span>Minutes before it starts</span>
+                </span>
+                <select
+                  className="notifications-time clay-pressed"
+                  aria-label="Minutes before events"
+                  value={notify.leadMinutes ?? DEFAULT_LEAD_MIN}
+                  onChange={(e) => change({ leadMinutes: Number(e.target.value) })}
+                >
+                  {LEADS.map((m) => (
+                    <option key={m} value={m}>
+                      {m === 60 ? '1 hour' : `${m} min`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="notifications-row">
               <span>
                 <span>Morning summary</span>
@@ -90,6 +124,26 @@ export function NotificationsRow() {
                 label="Morning summary"
                 checked={!!notify.morning}
                 onChange={(on) => change({ morning: on ? DEFAULT_MORNING : null })}
+              />
+            </div>
+            <div className="notifications-row">
+              <span>
+                <span>Evening wrap-up</span>
+                <span>What you did and what’s left</span>
+              </span>
+              {notify.evening && (
+                <input
+                  className="notifications-time clay-pressed"
+                  type="time"
+                  aria-label="Evening wrap-up time"
+                  value={notify.evening}
+                  onChange={(e) => e.target.value && change({ evening: e.target.value })}
+                />
+              )}
+              <Switch
+                label="Evening wrap-up"
+                checked={!!notify.evening}
+                onChange={(on) => change({ evening: on ? DEFAULT_EVENING : null })}
               />
             </div>
             <div className="notifications-actions">

@@ -92,10 +92,16 @@ export type Appearance = 'dark' | 'light' | 'system'
 export interface NotifySettings {
   /** Random id this phone is known by on the push Worker. */
   deviceId: string
-  /** A nudge 15 minutes before events with a time. */
+  /** A nudge before events with a time. */
   beforeEvents: boolean
+  /** How long before events the nudge comes; 15 when not set. */
+  leadMinutes?: number
+  /** Nudges before timed events from linked calendars too (e.g. work meetings). */
+  meetings?: boolean
   /** HH:mm for the morning summary, or null for none. */
   morning: string | null
+  /** HH:mm for the evening wrap-up of what got done and what's left; none when not set. */
+  evening?: string | null
 }
 
 /** A calendar from outside Notey, shown read-only. */
