@@ -1,16 +1,30 @@
-import type { StoreData } from '../types/models'
+import type { Settings, StoreData } from '../types/models'
 import { todayISO } from './dates'
+
+/**
+ * Settings worth carrying to a fresh install. Not the API key (secret), and not notifications:
+ * a reinstalled app gets a new push address, so those are turned on again.
+ */
+export type BackupSettings = Pick<Settings, 'calendars' | 'appearance'>
 
 interface BackupFile {
   app: 'notey'
   version: 1
   exportedAt: string
   data: StoreData
+  /** Missing in backups made before settings were included. */
+  settings?: BackupSettings
 }
 
-/** A dated JSON file with everything except the API key (that lives in settings, not the store). */
-export function createBackup(data: StoreData) {
-  const backup: BackupFile = { app: 'notey', version: 1, exportedAt: new Date().toISOString(), data }
+/** A dated JSON file with all data plus calendars and appearance; never the API key. */
+export function createBackup(data: StoreData, settings: Settings) {
+  const backup: BackupFile = {
+    app: 'notey',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    data,
+    settings: { calendars: settings.calendars, appearance: settings.appearance },
+  }
   return new File([JSON.stringify(backup)], `notey-backup-${todayISO()}.json`, { type: 'application/json' })
 }
 

@@ -24,7 +24,7 @@ export function BackupRow() {
 
   const exportBackup = async () => {
     try {
-      await shareFile(createBackup(state))
+      await shareFile(createBackup(state, settings))
       update({ lastBackupAt: new Date().toISOString() })
     } catch (e) {
       // Closing the share sheet without saving isn't an error.
@@ -48,6 +48,7 @@ export function BackupRow() {
           role: 'destructive',
           handler: () => {
             dispatch({ type: 'store/replace', data: backup.data })
+            if (backup.settings) update(backup.settings)
             showToast({ message: 'Backup restored', icon: 'check' })
           },
         },
@@ -91,7 +92,10 @@ export function BackupRow() {
           }}
         />
       </section>
-      <p className="settings-footnote">Your API key isn’t included. Save backups to Files › iCloud Drive to keep them safe.</p>
+      <p className="settings-footnote">
+        Includes your calendars and appearance, but not your API key or notifications (turn those on again after
+        restoring). Save backups to Files › iCloud Drive to keep them safe.
+      </p>
       <p className="settings-footnote backup-storage">
         <Icon name={persisted ? 'check' : 'alert'} size={14} strokeWidth={2.6} />
         {persisted
