@@ -18,7 +18,7 @@ interface Reminder {
 }
 
 const MAX_REMINDERS = 500
-const MAX_BRIDGE_BYTES = 300_000
+const MAX_BODY_BYTES = 300_000
 // Device and bridge ids are random UUIDs made by the phone; knowing one is what lets you use it.
 const DEVICE_PATH = /^\/devices\/([0-9a-f-]{36})(\/reminders|\/test)?$/
 const BRIDGE_PATH = /^\/bridge\/([0-9a-f-]{36})$/
@@ -41,6 +41,12 @@ export default {
 
     if (request.method === 'OPTIONS') return reply(204)
     if (origin && !allowed) return reply(403)
+
+    // Uploads are read as text first so oversized ones are refused before parsing.
+    const readJson = async <T>() => {
+      const text = await request.text()
+      return text.length > MAX_BODY_BYTES ? null : (JSON.parse(text) as T)
+    }
 
     const url = new URL(request.url)
 
@@ -73,10 +79,9 @@ export default {
     if (bridge) {
       const [, bridgeId] = bridge
       if (request.method === 'PUT') {
-        const text = await request.text()
-        if (text.length > MAX_BRIDGE_BYTES) return reply(413)
         // Shortcuts may send the list itself or wrapped as { events: [...] }.
-        const body = JSON.parse(text) as unknown
+        const body = await readJson<unknown>()
+        if (body === null) return reply(413)
         const events = Array.isArray(body) ? body : (body as { events?: unknown })?.events
         if (!Array.isArray(events)) return reply(400)
         await env.DB.prepare(
@@ -101,7 +106,9 @@ export default {
 
     // Turn notifications on: remember where to push to.
     if (!action && request.method === 'PUT') {
-      const { subscription } = await request.json<{ subscription: PushSubscription }>()
+      const body = await readJson<{ subscription: PushSubscription }>()
+      if (body === null) return reply(413)
+      const { subscription } = body
       if (!subscription?.endpoint?.startsWith('https://')) return reply(400)
       await env.DB.prepare(
         'INSERT INTO devices (id, subscription, updated_at) VALUES (?1, ?2, ?3) ON CONFLICT (id) DO UPDATE SET subscription = ?2, updated_at = ?3',
@@ -127,7 +134,9 @@ export default {
 
     // Replace everything this phone wants to be reminded of.
     if (action === '/reminders' && request.method === 'PUT') {
-      const { reminders } = await request.json<{ reminders: Reminder[] }>()
+      const body = await readJson<{ reminders: Reminder[] }>()
+      if (body === null) return reply(413)
+      const { reminders } = body
       if (!Array.isArray(reminders) || reminders.length > MAX_REMINDERS) return reply(400)
       const valid = reminders.filter(
         (r) => typeof r.id === 'string' && Number.isFinite(r.at) && r.at > Date.now() && typeof r.title === 'string',
