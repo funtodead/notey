@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 import { todayISO } from '../lib/dates'
+import { loadMic, saveMic } from '../lib/storage'
 import { existingContext, planChanges } from '../lib/changes'
 import { emptiedLists, refile, toBundle, type Draft } from '../lib/filing'
 import { fileText, GroqError, transcribe } from '../lib/groq'
@@ -18,11 +19,13 @@ export function useMicSession() {
   const { state, dispatch } = useStore()
   const { settings } = useSettings()
   const recorder = useRecorder()
-  const [messages, setMessages] = useState<MicMessage[]>([])
+  const [messages, setMessages] = useState<MicMessage[]>(loadMic)
   const [phase, setPhase] = useState<MicPhase>('idle')
   const [error, setError] = useState<MicError | null>(null)
   /** A recording that couldn't be transcribed yet (offline or no key). */
   const [keptAudio, setKeptAudio] = useState<Blob | null>(null)
+
+  useEffect(() => saveMic(messages), [messages])
 
   // Async steps finish later; they must read the store as it is then, not as it was when they started.
   const latest = useRef({ state, settings })
@@ -184,6 +187,12 @@ export function useMicSession() {
     setPhase('idle')
   }
 
+  /** Empties the conversation; what was filed stays filed. */
+  const clear = () => {
+    setMessages([])
+    setPhase('idle')
+  }
+
   /** Called when the sheet opens: last time's result becomes part of the history. */
   const resume = () => {
     if (phase === 'filed') setPhase('idle')
@@ -212,6 +221,7 @@ export function useMicSession() {
     saveEdit,
     removeFiled,
     undoAll,
+    clear,
     resume,
     pause,
   }

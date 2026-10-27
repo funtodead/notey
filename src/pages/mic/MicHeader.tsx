@@ -37,7 +37,13 @@ export function MicHeader({ session, onClose }: { session: MicSession; onClose: 
           {label}
         </output>
       </div>
-      <span className="mic-header-spacer" aria-hidden="true" />
+      {session.messages.length > 0 && (session.phase === 'idle' || session.phase === 'filed') ? (
+        <button className="mic-header-clear" onClick={session.clear}>
+          Clear
+        </button>
+      ) : (
+        <span className="mic-header-spacer" aria-hidden="true" />
+      )}
     </header>
   )
 }
