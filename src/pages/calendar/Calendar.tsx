@@ -10,10 +10,11 @@ import { useTodayDate } from '../../hooks/useTodayDate'
 import { monthKey } from '../../lib/calendar'
 import { DaySheet } from './DaySheet'
 import { MonthGrid } from './MonthGrid'
+import { WeekView } from './WeekView'
 import { YearGrid } from './YearGrid'
 import './Calendar.css'
 
-type View = 'month' | 'year'
+type View = 'week' | 'month' | 'year'
 
 export default function Calendar() {
   const today = useTodayDate()
@@ -58,10 +59,12 @@ export default function Calendar() {
       <div className="calendar-header">
         <PageHeader
           title="Calendar"
+          size="medium"
           end={
             <Segmented
               label="Calendar view"
               options={[
+                { id: 'week', label: 'Week' },
                 { id: 'month', label: 'Month' },
                 { id: 'year', label: 'Year' },
               ]}
@@ -72,7 +75,9 @@ export default function Calendar() {
         />
       </div>
 
-      {view === 'month' ? (
+      {view === 'week' ? (
+        <WeekView today={today} />
+      ) : view === 'month' ? (
         <>
           {monthList.map(({ year, month }) => (
             <MonthGrid

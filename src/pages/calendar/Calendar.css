@@ -36,3 +36,7 @@
   border-radius: 50%;
   background: var(--dot);
 }
+
+.calendar-header .segmented button {
+  padding: 0 10px;
+}
