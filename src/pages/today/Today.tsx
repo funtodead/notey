@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { EditFiled } from '../../components/items/EditFiled'
 import { Page } from '../../components/layout/Page'
 import { PageHeader } from '../../components/layout/PageHeader'
+import { Icon } from '../../components/ui/Icon'
 import { IconButton } from '../../components/ui/IconButton'
 import { useExternalDay } from '../../hooks/useCalendars'
 import { useCategories } from '../../hooks/useCategories'
@@ -20,6 +21,7 @@ import { CalendarSection } from './CalendarSection'
 import { CategorySection } from './CategorySection'
 import { OverdueSection } from './OverdueSection'
 import { ProgressRing } from './ProgressRing'
+import { SearchSheet } from './SearchSheet'
 import { SpanBanner } from './SpanBanner'
 import { TodayEmpty } from './TodayEmpty'
 
@@ -34,6 +36,7 @@ export default function Today() {
   /** Id for the item being added by hand. */
   const [adding, setAdding] = useState<string | null>(null)
   const { state, dispatch } = useStore()
+  const [searching, setSearching] = useState(false)
 
   const external = useExternalDay(today)
   const tasks = items.filter((i) => i.kind === 'task')
@@ -58,6 +61,11 @@ export default function Today() {
           </>
         }
       />
+
+      <button className="search-open clay-pressed" onClick={() => setSearching(true)}>
+        <Icon name="search" size={18} />
+        Search everything
+      </button>
 
       <BackupBanner />
 
@@ -92,6 +100,7 @@ export default function Today() {
         onClose={() => setAdding(null)}
         onSave={(draft) => adding && dispatch({ type: 'entities/add', bundle: refile({ kind: 'item', id: adding }, draft, state).bundle })}
       />
+      <SearchSheet isOpen={searching} onClose={() => setSearching(false)} />
     </Page>
   )
 }
