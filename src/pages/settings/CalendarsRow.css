@@ -107,3 +107,8 @@ p.calendars-failed {
   color: var(--accent-text);
   font-weight: 800;
 }
+
+.calendars-add-title {
+  margin: 0 0 0 2px;
+  font-size: 15px;
+}

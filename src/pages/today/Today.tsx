@@ -10,8 +10,10 @@ import { useCategories } from '../../hooks/useCategories'
 import { useDay } from '../../hooks/useDay'
 import { useItemActions } from '../../hooks/useItemActions'
 import { useOverdue } from '../../hooks/useOverdue'
+import { useStore } from '../../hooks/useStore'
 import { useTodayDate } from '../../hooks/useTodayDate'
 import { formatLongDate } from '../../lib/dates'
+import { refile } from '../../lib/filing'
 import type { Item } from '../../types/models'
 import { BackupBanner } from './BackupBanner'
 import { CalendarSection } from './CalendarSection'
@@ -29,6 +31,9 @@ export default function Today() {
   const { categories, byId } = useCategories()
   const actions = useItemActions()
   const [editing, setEditing] = useState<Item | null>(null)
+  /** Id for the item being added by hand. */
+  const [adding, setAdding] = useState<string | null>(null)
+  const { state, dispatch } = useStore()
 
   const external = useExternalDay(today)
   const tasks = items.filter((i) => i.kind === 'task')
@@ -41,7 +46,14 @@ export default function Today() {
         title="Today"
         end={
           <>
-            {tasks.length > 0 && <ProgressRing done={tasks.filter((t) => t.done).length} total={tasks.length} />}
+            {tasks.length > 0 && (
+              <ProgressRing
+                done={tasks.filter((t) => t.done).length}
+                total={tasks.length}
+                onClick={() => router.push('/stats')}
+              />
+            )}
+            <IconButton icon="plus" label="Add something" onClick={() => setAdding(crypto.randomUUID())} />
             <IconButton icon="settings" label="Settings" onClick={() => router.push('/settings')} />
           </>
         }
@@ -74,6 +86,11 @@ export default function Today() {
         onClose={() => setEditing(null)}
         onSave={(draft) => editing && actions.edit(editing, draft)}
         onRemove={() => editing && actions.removeAll(editing)}
+      />
+      <EditFiled
+        entity={adding ? { kind: 'item', id: adding } : null}
+        onClose={() => setAdding(null)}
+        onSave={(draft) => adding && dispatch({ type: 'entities/add', bundle: refile({ kind: 'item', id: adding }, draft, state).bundle })}
       />
     </Page>
   )

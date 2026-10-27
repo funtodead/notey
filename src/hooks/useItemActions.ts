@@ -1,6 +1,6 @@
 import { useIonActionSheet } from '@ionic/react'
 
-import { addDays } from '../lib/dates'
+import { addDays, daysBetween, todayISO } from '../lib/dates'
 import { refile, type Draft } from '../lib/filing'
 import type { Item } from '../types/models'
 import { useStore } from './useStore'
@@ -54,6 +54,15 @@ export function useItemActions() {
     },
 
     moveTo: (item: Item, date: string) => dispatch({ type: 'items/update', id: item.id, changes: { date } }),
+
+    /** Swipe right: a day later (tomorrow, for something overdue), keeping a multi-day event's length. */
+    postpone: (item: Item) => {
+      const today = todayISO()
+      const date = addDays(item.date < today ? today : item.date, 1)
+      const changes: Partial<Item> = { date }
+      if (item.endDate) changes.endDate = addDays(item.endDate, daysBetween(item.date, date))
+      changeWithUndo(item, changes, `Moved “${item.title}” to ${date === addDays(today, 1) ? 'tomorrow' : 'the next day'}`)
+    },
 
     /** Swipe-to-delete: a repeating item asks whether to delete just that day or the rest of the series. */
     remove: (item: Item) => {

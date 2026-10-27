@@ -15,7 +15,8 @@ interface EditFiledProps {
   entity: EntityRef | null
   onClose: () => void
   onSave: (draft: Draft) => void
-  onRemove: () => void
+  /** Left out for something new, which has nothing to remove yet. */
+  onRemove?: () => void
 }
 
 const REPEATS: { id: Repeat['freq'] | 'never'; label: string }[] = [
@@ -26,13 +27,21 @@ const REPEATS: { id: Repeat['freq'] | 'never'; label: string }[] = [
   { id: 'yearly', label: 'Yearly' },
 ]
 
+const KINDS: { id: Draft['kind']; label: string }[] = [
+  { id: 'task', label: 'To do' },
+  { id: 'event', label: 'Event' },
+]
+
 const DESTINATIONS: { id: Draft['dest']; label: string }[] = [
   { id: 'day', label: 'Today' },
   { id: 'note', label: 'Notes' },
   { id: 'list', label: 'List' },
 ]
 
-/** "Fix this item" sheet: rename a thing, move it to another place, day, list or category, or make it repeat. */
+/**
+ * "Fix this item" sheet: rename a thing, move it to another place, day, list or category, or make it repeat.
+ * Also the "New item" sheet, when `entity` points at an id that isn't stored yet.
+ */
 export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps) {
   const { state } = useStore()
   const today = useTodayDate()
@@ -54,16 +63,30 @@ export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps)
       {draft && (
         <section className="edit-filed" aria-label="Edit filed item">
           <div className="edit-filed-header">
-            <h2>Fix this item</h2>
-            <button
-              className="edit-filed-remove"
-              onClick={() => {
-                onRemove()
-                onClose()
-              }}
-            >
-              Remove
-            </button>
+            <h2>{onRemove ? 'Fix this item' : 'New item'}</h2>
+            <span className="edit-filed-header-end">
+              {draft.dest === 'day' && (
+                <button
+                  className={`edit-filed-star ${draft.starred ? 'edit-filed-star-on' : ''}`}
+                  aria-label="Important"
+                  aria-pressed={draft.starred}
+                  onClick={() => set({ starred: !draft.starred })}
+                >
+                  <Icon name="star" size={22} />
+                </button>
+              )}
+              {onRemove && (
+                <button
+                  className="edit-filed-remove"
+                  onClick={() => {
+                    onRemove()
+                    onClose()
+                  }}
+                >
+                  Remove
+                </button>
+              )}
+            </span>
           </div>
 
           <label htmlFor="edit-title" className="visually-hidden">
@@ -72,6 +95,7 @@ export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps)
           <input
             id="edit-title"
             className="edit-filed-title clay-pressed"
+            placeholder="What is it?"
             value={draft.title}
             onChange={(e) => set({ title: e.target.value })}
           />
@@ -91,6 +115,21 @@ export function EditFiled({ entity, onClose, onSave, onRemove }: EditFiledProps)
               ))}
             </div>
           </fieldset>
+
+          {draft.dest === 'day' && (
+            <div className="edit-filed-segments clay-pressed" role="group" aria-label="Type">
+              {KINDS.map((k) => (
+                <button
+                  key={k.id}
+                  className={draft.kind === k.id ? 'clay-sm' : undefined}
+                  aria-pressed={draft.kind === k.id}
+                  onClick={() => set({ kind: k.id })}
+                >
+                  {k.label}
+                </button>
+              ))}
+            </div>
+          )}
 
           {draft.dest === 'day' && (
             <fieldset>

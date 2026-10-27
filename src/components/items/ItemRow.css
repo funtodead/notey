@@ -75,3 +75,14 @@
   text-decoration: line-through;
   opacity: 0.8;
 }
+
+.item-star {
+  display: inline-flex;
+  margin-right: 5px;
+  vertical-align: -1px;
+  color: var(--star);
+}
+
+.item-star svg {
+  fill: currentColor;
+}

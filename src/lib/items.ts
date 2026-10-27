@@ -1,8 +1,9 @@
 import type { Item } from '../types/models'
 import { occurrence, occursOn } from './recurrence'
 
-/** Timed events first, in time order, then tasks in the order they were added. */
+/** Starred first, then timed events in time order, then tasks in the order they were added. */
 export function compareItems(a: Item, b: Item) {
+  if (!!a.starred !== !!b.starred) return a.starred ? -1 : 1
   if (a.time && b.time) return a.time.localeCompare(b.time)
   if (a.time) return -1
   if (b.time) return 1

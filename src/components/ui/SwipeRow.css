@@ -3,14 +3,12 @@
   flex: none;
 }
 
-.swipe-delete {
+.swipe-action {
   position: absolute;
   top: 2px;
-  right: 0;
   bottom: 2px;
   width: 84px;
   border-radius: var(--swipe-radius, 14px);
-  background: var(--danger);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -21,7 +19,17 @@
   font-weight: 800;
 }
 
-/* The row's own (opaque) content covers the Delete button until it slides left. */
+.swipe-delete {
+  right: 0;
+  background: var(--danger);
+}
+
+.swipe-postpone {
+  left: 0;
+  background: var(--accent);
+}
+
+/* The row's own (opaque) content covers the buttons until it slides aside. */
 .swipe-content {
   position: relative;
   border-radius: var(--swipe-radius, 14px);
@@ -30,5 +38,10 @@
 
 .swipe-open {
   transform: translateX(-92px);
+  box-shadow: var(--clay-sm);
+}
+
+.swipe-open-right {
+  transform: translateX(92px);
   box-shadow: var(--clay-sm);
 }

@@ -12,6 +12,7 @@
   --accent: #6c62c9;
   --accent-text: #554bb5;
   --danger: #c4545b;
+  --star: #c9902c;
   --on-dot: #1d1b24;
   --well: #ebe9f0;
   --pill-bg: rgba(255, 255, 255, 0.7);
@@ -64,6 +65,7 @@
   --accent: #7468d6;
   --accent-text: #b1a9f0;
   --danger: #c4545b;
+  --star: #e0b45a;
   --well: #121118;
   --pill-bg: rgba(0, 0, 0, 0.22);
   --err-tint: #2e1f21;

@@ -49,6 +49,7 @@ export function toBundle(entries: FiledEntry[], state: StoreData, today: string)
       if (isDate(entry.end_date) && entry.end_date > date) item.endDate = entry.end_date
       if (isTime(entry.time)) item.time = entry.time
       if (entry.remind && item.time) item.remind = true
+      if (entry.starred) item.starred = true
       if (entry.repeat && !item.endDate) {
         item.repeat = { freq: entry.repeat, interval: Math.max(1, entry.repeat_interval ?? 1) }
         if (isDate(entry.repeat_until) && entry.repeat_until >= date) item.repeat.until = entry.repeat_until
@@ -115,6 +116,8 @@ export function describeRef(ref: EntityRef, state: StoreData, today: string): Fi
 export interface Draft {
   title: string
   dest: 'day' | 'note' | 'list'
+  kind: Item['kind']
+  starred: boolean
   date: string
   listId: string
   categoryId: string
@@ -130,6 +133,8 @@ export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft
   const base: Draft = {
     title: '',
     dest: 'day',
+    kind: 'task',
+    starred: false,
     date: today,
     listId: state.lists[0]?.id ?? '',
     categoryId: state.categories[0].id,
@@ -142,6 +147,8 @@ export function draftFor(ref: EntityRef, state: StoreData, today: string): Draft
     return {
       ...base,
       title: item.title,
+      kind: item.kind,
+      starred: !!item.starred,
       date: item.date,
       categoryId: item.categoryId,
       repeat: item.repeat ?? null,
@@ -176,7 +183,8 @@ export function refile(ref: EntityRef, draft: Draft, state: StoreData): { bundle
   }
   const old = ref.kind === 'item' ? state.items.find((i) => i.id === id) : undefined
   const item: Item = {
-    ...(old ?? { id, kind: 'task', done: false, createdAt }),
+    ...(old ?? { id, done: false, createdAt }),
+    kind: draft.kind,
     title: draft.title,
     categoryId: draft.categoryId,
     date: draft.date,
@@ -188,6 +196,8 @@ export function refile(ref: EntityRef, draft: Draft, state: StoreData): { bundle
   else delete item.time
   if (draft.remind && item.time) item.remind = true
   else delete item.remind
+  if (draft.starred) item.starred = true
+  else delete item.starred
   return { bundle: { items: [item] }, ref: { kind: 'item', id } }
 }
 

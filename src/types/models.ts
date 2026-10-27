@@ -28,6 +28,8 @@ export interface Item {
   skipDates?: string[]
   /** Send a notification at `time` ("remind me at 5 to…"). */
   remind?: boolean
+  /** Important: shown first, with a star. */
+  starred?: boolean
 }
 
 export interface Repeat {

@@ -11,14 +11,16 @@ interface ItemRowProps {
   category?: Category
   onToggle: () => void
   onDelete: () => void
+  /** Swipe right to move it a day later; left out for repeating items. */
+  onPostpone?: () => void
   /** Tapping the row (not the checkbox) opens it for editing. */
   onOpen: () => void
 }
 
 /** A task (checkbox) or event (time pill) row; without a category, colors come from the surrounding tone. */
-export function ItemRow({ item, category, onToggle, onDelete, onOpen }: ItemRowProps) {
+export function ItemRow({ item, category, onToggle, onDelete, onPostpone, onOpen }: ItemRowProps) {
   return (
-    <SwipeRow label={item.title} onDelete={onDelete}>
+    <SwipeRow label={item.title} onDelete={onDelete} onPostpone={item.repeat ? undefined : onPostpone}>
       <div
         className={[
           'item-row',
@@ -35,7 +37,14 @@ export function ItemRow({ item, category, onToggle, onDelete, onOpen }: ItemRowP
           <span className="item-time">{item.time ?? 'All day'}</span>
         )}
         <span className="item-text">
-          <span className="item-title">{item.title}</span>
+          <span className="item-title">
+            {item.starred && (
+              <span className="item-star" aria-label="Important">
+                <Icon name="star" size={13} strokeWidth={2} />
+              </span>
+            )}
+            {item.title}
+          </span>
           {/* A task's time (the checkbox takes the time pill's place), reminder bell and repeat rule. */}
           {((item.kind === 'task' && item.time) || item.remind || item.repeat) && (
             <span className="item-repeat">

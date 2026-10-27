@@ -176,3 +176,26 @@
   inset: 0;
   opacity: 0;
 }
+
+.edit-filed-header-end {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-filed-star {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.edit-filed-star-on {
+  color: var(--star);
+}
+
+.edit-filed-star-on svg {
+  fill: currentColor;
+}

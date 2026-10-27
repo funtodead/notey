@@ -20,3 +20,7 @@
   font-size: 13px;
   font-weight: 600;
 }
+
+.progress-ring {
+  color: var(--text);
+}

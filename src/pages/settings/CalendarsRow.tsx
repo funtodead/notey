@@ -104,6 +104,7 @@ export function CalendarsRow() {
           ))}
 
         <div className="calendars-add">
+          <h3 className="calendars-add-title">Add a calendar</h3>
           <input
             className="clay-pressed"
             placeholder="Name, e.g. Home"

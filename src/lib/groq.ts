@@ -19,6 +19,8 @@ export interface FiledEntry {
   repeat_until: string | null
   /** A notification at `time` ("remind me…"). */
   remind: boolean | null
+  /** Marked important ("urgent", "important", "high priority"). */
+  starred: boolean | null
 }
 
 /** Something existing the user asked to delete; `date` deletes one day of a repeating item. */
@@ -37,6 +39,7 @@ export interface Update {
   time: string | null
   category: string | null
   done: boolean | null
+  starred: boolean | null
   /** A note's details or a list item's quantity. */
   details: string | null
 }
@@ -110,6 +113,7 @@ export async function fileText(
             repeat_interval: nullable('integer'),
             repeat_until: nullable('string'),
             remind: nullable('boolean'),
+            starred: nullable('boolean'),
           },
           required: [
             'type',
@@ -125,6 +129,7 @@ export async function fileText(
             'repeat_interval',
             'repeat_until',
             'remind',
+            'starred',
           ],
           additionalProperties: false,
         },
@@ -150,9 +155,10 @@ export async function fileText(
             time: nullable('string'),
             category: { type: ['string', 'null'], enum: [...context.categories.map((c) => c.id), null] },
             done: nullable('boolean'),
+            starred: nullable('boolean'),
             details: nullable('string'),
           },
-          required: ['ref', 'occurrence', 'title', 'date', 'time', 'category', 'done', 'details'],
+          required: ['ref', 'occurrence', 'title', 'date', 'time', 'category', 'done', 'starred', 'details'],
           additionalProperties: false,
         },
       },
@@ -214,6 +220,9 @@ Reminders:
 - "remind me…" / "don't let me forget…" → a task (or the event, if it's an appointment) with remind true and the time to remind at. "remind me at 5 to call mom" → task "Call mom" today at 17:00. "in an hour" → now plus an hour. No time given → 09:00 (today if that's still ahead, else tomorrow).
 - Everything else has remind null. Reminders can repeat ("remind me every Monday at 8 to take out the bins").
 
+Priority:
+- A task or event the user calls important, urgent, high priority or a must ("important: renew passport") has starred true; everything else has starred null.
+
 Rules:
 - Dates are YYYY-MM-DD, resolved from today (e.g. "Tuesday" = the next Tuesday). Times are 24h HH:mm. Use null when not given.
 - Notes and list items have date, end_date and time null.
@@ -231,6 +240,7 @@ Changing:
 - When the user asks to change something that already exists — mark it done or not done, rename it, move it to another day or time, change its category, change a note's details or a list item's quantity — put it in "updates" with its ref and only the fields that change; every other field is null. Don't also create or delete it.
 - For one day of a repeating item ("gym is done for today"), set occurrence to that day and done. A new date or time on a repeating item moves the whole series.
 - Renaming a list: give the list's ref and the new name as title.
+- "star it" / "make it important" → starred true; "not important anymore" → starred false.
 - Examples: "mark gym as done" → done true; "move the dentist to Friday at 4" → date = Friday, time 16:00; "the plumber note goes under Home" → category home; "make it 2 liters of milk" → details "2 L".
 
 Existing things:

@@ -32,9 +32,9 @@ export function existingContext(state: StoreData, today: string) {
         : item.endDate
           ? `${item.date} to ${item.endDate}`
           : `on ${item.date}`
-      const done = item.repeat
+      const done = (item.repeat
         ? item.doneDates?.includes(today) ? ' (done today)' : ''
-        : item.done ? ' (done)' : ''
+        : item.done ? ' (done)' : '') + (item.starred ? ' (starred)' : '')
       add(
         `i${n + 1}`,
         { kind: 'item', id: item.id },
@@ -179,6 +179,8 @@ export function planChanges(
           next.doneDates = update.done ? [...doneDates, day] : doneDates
         } else next.done = update.done
       }
+      if (update.starred === true) next.starred = true
+      if (update.starred === false) delete next.starred
       replace('item', next)
     } else if (entity.kind === 'note') {
       const note = current('note', entity.id)

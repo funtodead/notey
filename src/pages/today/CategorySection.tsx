@@ -10,7 +10,7 @@ interface CategorySectionProps {
 }
 
 export function CategorySection({ category, items, onOpen }: CategorySectionProps) {
-  const { toggleDone, remove } = useItemActions()
+  const { toggleDone, remove, postpone } = useItemActions()
   const tasks = items.filter((i) => i.kind === 'task')
 
   return (
@@ -30,6 +30,7 @@ export function CategorySection({ category, items, onOpen }: CategorySectionProp
           item={item}
           onToggle={() => toggleDone(item)}
           onDelete={() => remove(item)}
+          onPostpone={() => postpone(item)}
           onOpen={() => onOpen(item)}
         />
       ))}

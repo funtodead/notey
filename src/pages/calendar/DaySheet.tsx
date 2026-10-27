@@ -57,6 +57,7 @@ export function DaySheet({ date, expanded, onExpandedChange }: DaySheetProps) {
       category={byId.get(item.categoryId)}
       onToggle={() => actions.toggleDone(item)}
       onDelete={() => actions.remove(item)}
+      onPostpone={() => actions.postpone(item)}
       onOpen={() => setEditing(item)}
     />
   )
